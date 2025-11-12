@@ -1,58 +1,96 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './VerifyEmail.css'; // We will create this
-import welcomeBackground from '../assets/HireHelper_bg.jpeg'; 
-import logoImage from '../assets/logo.png';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
+import { API_PATHS } from "../api/apipath";
+import "./VerifyEmail.css";
+import welcomeBackground from "../assets/HireHelper_bg.jpeg";
+import logoImage from "../assets/logo.png";
 
 function VerifyEmail() {
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // ✅ send `otp`, not `code`
+      const { data } = await axiosInstance.post(API_PATHS.AUTH.VERIFY_EMAIL, {
+        otp: code,
+      });
+
+      console.log("Verification success:", data);
+
+      // ✅ On success, navigate to login
+      navigate("/login");
+    } catch (err) {
+      console.error("Verification failed:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Invalid or expired OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      // 🔹 Use a proper resend endpoint, not verify
+      await axiosInstance.post(API_PATHS.AUTH.FORGOT_PASSWORD);
+      alert("Verification code resent!");
+    } catch (err) {
+      alert("Failed to resend code. Try again.");
+    }
+  };
 
   return (
-    <div 
+    <div
       className="verify-container"
-      style={{ 
-        backgroundImage: `url(${welcomeBackground})` 
-      }}
+      style={{ backgroundImage: `url(${welcomeBackground})` }}
     >
       <div className="verify-overlay">
-        
-        {/* Logo at the top-left */}
         <div className="verify-logo">
-          <img src={logoImage} alt="Hire-a-Helper logo" /> 
+          <img src={logoImage} alt="Hire-a-Helper logo" />
           Hire-a-Helper
         </div>
 
-        {/* The main white card */}
         <div className="verify-card">
           <div className="verify-icon">
-            {/* This is a simple emoji placeholder for the icon */}
-            <span>&#x2705;</span> 
+            <span>&#x2709;&#xfe0f;</span>
           </div>
 
           <h2>Verify your email</h2>
           <p>Enter the 6-digit code sent to your email</p>
 
-          <form>
+          <form onSubmit={handleVerify}>
+            {error && <p className="error-message">{error}</p>}
+
             <div className="input-group">
               <label>Verification Code</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="0 0 0 0 0 0"
                 value={code}
-                onChange={(e) => setCode(e.target.value)} 
+                onChange={(e) => setCode(e.target.value)}
                 maxLength="6"
+                required
               />
             </div>
-            
-            {/* We'll make this <Link> look like a button */}
-            <Link to="/feed" className="verify-button">Verify Code</Link>
+
+            <button type="submit" className="verify-button" disabled={loading}>
+              {loading ? "Verifying..." : "Verify Code"}
+            </button>
           </form>
 
           <p className="resend-link">
-            Didn't receive the code? <strong>Resend</strong>
+            Didn’t receive the code?{" "}
+            <strong onClick={handleResend} style={{ cursor: "pointer" }}>
+              Resend
+            </strong>
           </p>
         </div>
-
       </div>
     </div>
   );
