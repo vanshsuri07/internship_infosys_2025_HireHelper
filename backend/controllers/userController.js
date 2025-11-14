@@ -78,41 +78,42 @@ exports.registerUser = async (req, res) => {
 };
 
 // verify Email
+// verifyEmail controller
 exports.verifyEmail = async (req, res) => {
-  const { email, otp } = req.body;
+  const { otp } = req.body;
 
-  if (!email || !otp) {
-    return res.status(400).json({ message: "Email and OTP are required" });
+  // ✅ Only OTP is required now
+  if (!otp) {
+    return res.status(400).json({ message: "OTP is required" });
   }
 
   try {
-    // Find user
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // Find OTP document
+    const otpDoc = await Otp.findOne({ otp }).sort({ createdAt: -1 });
 
-    if (user.isVerified) {
-      return res.status(400).json({ message: "Email already verified" });
-    }
-
-    // Verify OTP
-    const otpDoc = await Otp.findOne({ email, otp }).sort({ createdAt: -1 });
     if (!otpDoc) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    if (otpDoc.verified) {
-      return res.status(400).json({ message: "OTP already used" });
+    // Find the corresponding user
+    const user = await User.findOne({ email: otpDoc.email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Prevent double verification
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email already verified" });
     }
 
     // Mark user as verified
     user.isVerified = true;
     await user.save();
 
-    // Delete OTP
+    // Mark OTP as used and delete it
     await Otp.deleteOne({ _id: otpDoc._id });
 
+    // Send success response
     res.status(200).json({
       message: "Email verified successfully! You can now login",
       id: user._id,
