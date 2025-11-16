@@ -181,3 +181,17 @@
 .back-icon {
   font-size: 1.2rem;
 }
+
+/* --- Style for Login Error Message --- */
+.form-error {
+  color: red;
+  background-color: #ffe0e0;
+  border: 1px solid red;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+  max-width: 500px;
+  width: 100%;
+}

@@ -1,0 +1,181 @@
+/* --- Main Layout --- */
+.dashboard-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  overflow: hidden; /* Prevents whole page scroll */
+}
+
+/* --- Sidebar (Left Side) --- */
+.sidebar {
+  width: 260px;
+  background-image: linear-gradient(to bottom, #ee6bb8, #611a7b);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  color: #ffffff;
+}
+
+/* ... (all your sidebar, logo, nav-link, and profile styles are unchanged) ... */
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;         
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 25px;
+  color: #ffffff; 
+}
+.sidebar-logo img {
+  height: 1.8rem; 
+  width: auto;    
+  margin-right: 10px; 
+  border-radius: 5px;
+}
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+}
+.nav-link { 
+  text-decoration: none;
+  color: #e0e0e0; 
+  padding: 12px 20px;
+  border-radius: 10px; 
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+}
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1); 
+}
+.nav-link.active {
+  background-color: #ffffff;
+  color: #4a0f60; 
+  font-weight: bold;
+}
+.sidebar-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 15px; 
+}
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-profile .profile-icon {
+  font-size: 2.5rem;
+  color: #ffffff;
+}
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1; 
+  overflow: hidden; 
+}
+.profile-name {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-email {
+  font-size: 0.8rem;
+  color: #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.logout-button {
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+}
+.logout-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+/* ... (end of sidebar styles) ... */
+
+
+/* --- Main Content Area (Right Side) --- */
+.dashboard-main {
+  flex: 1; /* Takes up rest of the space */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent this container from scrolling */
+}
+
+/* --- Header (Top of Right Side) --- */
+.header {
+  height: 80px; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  background-image: linear-gradient(to right, #f6d3e2, #f8f4fd); 
+  border-bottom: 1px solid #e0e0e0;
+  box-sizing: border-box;
+  flex-shrink: 0; /* Prevents the header from shrinking */
+}
+
+/* ... (all your header-title, header-controls, etc. styles are unchanged) ... */
+.header-title h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #000;
+}
+.header-title p {
+  margin: 0;
+  color: #555;
+}
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header-search {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 8px 15px;
+}
+.header-search .search-icon {
+  color: #aaa;
+}
+.header-search input {
+  border: none;
+  outline: none;
+  background: none;
+  margin-left: 10px;
+  font-size: 0.9rem;
+}
+.header-notification {
+  font-size: 1.5rem; 
+  color: #e11d74; 
+  cursor: pointer;
+}
+/* ... (end of header styles) ... */
+
+
+/* --- Content (Bottom of Right Side) --- */
+.dashboard-content {
+  flex: 1; /* Takes up rest of vertical space */
+  padding: 30px;
+  background-color: #ffffff;
+  overflow-y: auto; /* Allows ONLY this area to scroll */
+}
