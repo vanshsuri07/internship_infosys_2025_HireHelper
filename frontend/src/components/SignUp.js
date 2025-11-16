@@ -5,7 +5,7 @@ import { API_PATHS } from "../api/apipath";
 import "./SignUp.css";
 import welcomeBackground from "../assets/HireHelper_bg.jpeg";
 import logoImage from "../assets/logo.png";
-
+import { IoArrowBack } from "react-icons/io5";
 function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -19,7 +19,7 @@ function SignUp() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const payload = { firstName, lastName, email, phone, password };
+    const payload = { firstName, lastName, email, password };
 
     try {
       // --- API CALL ---
@@ -29,11 +29,6 @@ function SignUp() {
       );
 
       console.log("Signup success:", data);
-
-      // You can store token or user if needed:
-      // localStorage.setItem("token", data.token);
-
-      // Navigate to verify email or dashboard
       navigate("/verify-email");
     } catch (err) {
       console.error("Signup error:", err.response?.data || err.message);
@@ -76,8 +71,9 @@ function SignUp() {
 
       {/* RIGHT SIDE */}
       <div className="form-side">
-        <a href="#" className="back-link">
-          ← Back to website
+        <a href="/" className="back-link">
+          <IoArrowBack className="back-icon" />
+          Back to website
         </a>
 
         <form onSubmit={handleSubmit}>
@@ -110,13 +106,12 @@ function SignUp() {
           </div>
 
           <div className="input-group">
-            <label>Phone Number</label>
+            <label>Phone Number (Optional)</label>
             <input
               type="tel"
               placeholder="Enter your phone number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              required
             />
           </div>
 

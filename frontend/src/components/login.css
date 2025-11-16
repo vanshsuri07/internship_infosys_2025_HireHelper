@@ -170,3 +170,14 @@
 .signup-hyperlink:hover {
   text-decoration: none;
 }
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.back-icon {
+  font-size: 1.2rem;
+}

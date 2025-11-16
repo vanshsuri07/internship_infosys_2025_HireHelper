@@ -5,7 +5,7 @@ import { API_PATHS } from "../api/apipath";
 import "./login.css";
 import welcomeBackground from "../assets/HireHelper_bg.jpeg";
 import logoImage from "../assets/logo.png";
-
+import { IoArrowBack } from "react-icons/io5";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,10 +53,10 @@ function Login() {
     <div className="login-container">
       {/* ===== LEFT HALF (LOGIN FORM) ===== */}
       <div className="form-side">
-        <a href="#" className="back-link">
-          ← Back to website
+        <a href="/" className="back-link">
+          <IoArrowBack className="back-icon" />
+          Back to website
         </a>
-
         <form onSubmit={handleSubmit}>
           <h2>Log in to your account</h2>
 
