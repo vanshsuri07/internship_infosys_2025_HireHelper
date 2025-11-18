@@ -10,7 +10,7 @@
 /* --- Sidebar (Left Side) --- */
 .sidebar {
   width: 260px;
-  background-image: linear-gradient(to bottom, #ee6bb8, #611a7b);
+  background-image: linear-gradient(to bottom, #e91594, #611a7b);
   padding: 20px;
   display: flex;
   flex-direction: column;

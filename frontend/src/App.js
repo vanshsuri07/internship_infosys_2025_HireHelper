@@ -6,6 +6,9 @@ import SignUp from './components/SignUp';
 import Login from './components/login'; 
 import VerifyEmail from './components/VerifyEmail'; 
 
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+
 // Dashboard Layout
 import DashboardLayout from './components/DashboardLayout';
 
@@ -27,6 +30,9 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         
         {/* Set signup as the default page */}
         <Route path="/" element={<Navigate to="/signup" replace />} />

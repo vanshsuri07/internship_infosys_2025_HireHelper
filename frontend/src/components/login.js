@@ -80,7 +80,7 @@ function Login() {
             />
           </div>
           
-          <p className="forgot-password">Forget Password?</p>
+          <Link to="/forgot-password" className="forgot-password">Forget Password?</Link>
 
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

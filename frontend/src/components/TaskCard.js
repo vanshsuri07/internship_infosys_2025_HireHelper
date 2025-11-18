@@ -1,5 +1,5 @@
 import React from 'react';
-import './TaskCard.css'; // Make sure this CSS file exists in src/components/
+import './TaskCard.css'; 
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock } from 'react-icons/fa';
 
 // --- NEW: A placeholder image URL ---
