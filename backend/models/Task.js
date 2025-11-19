@@ -1,3 +1,5 @@
+// models/Task.js
+
 const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema(
@@ -10,12 +12,10 @@ const taskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true,
     },
     description: {
       type: String,
       required: true,
-      trim: true,
     },
     location: {
       type: String,
@@ -27,20 +27,31 @@ const taskSchema = new mongoose.Schema(
     },
     end_time: {
       type: Date,
+      default: null,
     },
     picture: {
       type: String,
       default: "",
     },
+    category: {
+      type: String,
+      enum: [
+        "Moving",
+        "Gardening",
+        "Painting",
+        "Cleaning",
+        "Delivery",
+        "Other",
+      ],
+      default: "Other",
+    },
     status: {
       type: String,
-      enum: ["open", "in-progress", "completed", "cancelled"],
+      enum: ["open", "in-progress", "completed"],
       default: "open",
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Task", taskSchema);

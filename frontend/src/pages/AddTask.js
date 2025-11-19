@@ -1,102 +1,211 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './AddTask.css'; // We will create this
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { API_PATHS } from "../api/apipath";
+import "./AddTask.css";
 
 function AddTask() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [category, setCategory] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [category, setCategory] = useState("");
   const [taskImage, setTaskImage] = useState(null);
+  const [existingImage, setExistingImage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const { addTask } = useAuth();
   const navigate = useNavigate();
+  const { taskId } = useParams();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (taskId) {
+      setIsEditMode(true);
+      fetchTaskDetails(taskId);
+    }
+  }, [taskId]);
+
+  const fetchTaskDetails = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login to edit tasks");
+        navigate("/login");
+        return;
+      }
+
+      const res = await axios.get(API_PATHS.TASK.GET_TASK_BY_ID(id), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const task = res.data.data || res.data.task || res.data;
+
+      if (!task || !task.title) {
+        throw new Error("Task data not found in response");
+      }
+
+      setTitle(task.title || "");
+      setDescription(task.description || "");
+      setLocation(task.location || "");
+      setCategory(task.category || "Other");
+
+      if (task.start_time) {
+        const startDateTime = new Date(task.start_time);
+        setStartDate(startDateTime.toISOString().split("T")[0]);
+        setStartTime(
+          startDateTime.toTimeString().split(" ")[0].substring(0, 5)
+        );
+      }
+
+      if (task.end_time) {
+        const endDateTime = new Date(task.end_time);
+        setEndDate(endDateTime.toISOString().split("T")[0]);
+        setEndTime(endDateTime.toTimeString().split(" ")[0].substring(0, 5));
+      }
+
+      if (task.picture) {
+        setExistingImage(task.picture);
+      }
+    } catch (error) {
+      console.error("Fetch task error:", error);
+      alert(error.response?.data?.message || "Failed to fetch task details");
+      navigate("/dashboard/mytasks");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const imageURL = taskImage ? URL.createObjectURL(taskImage) : null;
-    
-    // Create a new task object from our state
-    const newTask = {
-  id: Date.now(), // Simple unique ID
-  title: title,
-  description: description,
-  location: location,
-  startDate: startDate,
-  startTime: startTime,
-  endTime: endTime,
-  category: category,
-  image: imageURL, // <-- Use the new URL
-};
+    setLoading(true);
 
-    // Add the task to our global context
-    addTask(newTask);
+    try {
+      const token = localStorage.getItem("token");
 
-    // Navigate to the "My Tasks" page to see it
-    navigate('/dashboard/mytasks');
+      if (!token) {
+        alert("Please login to create/edit a task");
+        navigate("/login");
+        return;
+      }
+
+      // Format dates to ISO string
+      const start_time = `${startDate}T${startTime}:00`;
+      const end_time = endDate && endTime ? `${endDate}T${endTime}:00` : null;
+
+      // Create FormData instead of regular object
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("location", location);
+      formData.append("start_time", start_time);
+      formData.append("end_time", end_time);
+      formData.append("category", category);
+
+      // Only add picture if a new one is selected
+      if (taskImage) {
+        formData.append("picture", taskImage);
+      }
+
+      // Only include status for new tasks
+      if (!isEditMode) {
+        formData.append("status", "open");
+      }
+
+      let res;
+      if (isEditMode) {
+        // Update existing task
+        res = await axios.put(API_PATHS.TASK.UPDATE_TASK(taskId), formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // Don't set Content-Type header - browser will set it automatically
+            // "Content-Type": "multipart/form-data" is set automatically by axios
+          },
+        });
+      } else {
+        // Create new task
+        res = await axios.post(API_PATHS.TASK.CREATE_TASK, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // Don't set Content-Type header - browser will set it automatically
+          },
+        });
+      }
+
+      if (res.data.success) {
+        alert(
+          isEditMode
+            ? "Task updated successfully!"
+            : "Task created successfully!"
+        );
+        navigate("/dashboard/mytasks");
+      }
+    } catch (error) {
+      console.error("Task operation error:", error);
+      alert(
+        error.response?.data?.message || error.message || "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="add-task-container">
       <form className="add-task-form" onSubmit={handleSubmit}>
-        
+        <h2>{isEditMode ? "Edit Task" : "Create New Task"}</h2>
+
         <div className="form-group">
-          <label htmlFor="title">Task Title</label>
+          <label>Task Title *</label>
           <input
             type="text"
-            id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g., Furniture"
+            placeholder="Enter task title"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="description">Description</label>
+          <label>Description *</label>
           <textarea
-            id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Describe what help you need..."
+            placeholder="Describe the task in detail"
+            rows="4"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="location">Location</label>
+          <label>Location *</label>
           <input
             type="text"
-            id="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g., Delhi"
+            placeholder="Enter location"
             required
           />
         </div>
 
-        {/* --- Row for Start Date/Time --- */}
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="start-date">Start Date</label>
+            <label>Start Date *</label>
             <input
               type="date"
-              id="start-date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
               required
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="start-time">Start Time</label>
+            <label>Start Time *</label>
             <input
               type="time"
-              id="start-time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
               required
@@ -104,22 +213,21 @@ function AddTask() {
           </div>
         </div>
 
-        {/* --- Row for End Date/Time (Optional) --- */}
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="end-date">End Date (Optional)</label>
+            <label>End Date (Optional)</label>
             <input
               type="date"
-              id="end-date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
+              min={startDate || new Date().toISOString().split("T")[0]}
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="end-time">End Time (Optional)</label>
+            <label>End Time (Optional)</label>
             <input
               type="time"
-              id="end-time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
             />
@@ -127,35 +235,72 @@ function AddTask() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="category">Category</label>
+          <label>Category *</label>
           <select
-            id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
           >
-            <option value="" disabled>Select a category</option>
+            <option value="">Select category</option>
             <option value="Moving">Moving</option>
             <option value="Gardening">Gardening</option>
             <option value="Painting">Painting</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Delivery">Delivery</option>
             <option value="Other">Other</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label htmlFor="image">Task Image (Optional)</label>
+          <label>Task Image (Optional)</label>
           <input
             type="file"
-            id="image"
+            accept="image/*"
             onChange={(e) => setTaskImage(e.target.files[0])}
-            accept="image/png, image/jpeg, image/gif"
           />
+          {/* Show existing image if in edit mode and no new image selected */}
+          {existingImage && !taskImage && (
+            <div className="image-preview">
+              <p>Current image:</p>
+              <img
+                src={existingImage}
+                alt="Current task"
+                style={{
+                  maxWidth: "200px",
+                  maxHeight: "200px",
+                  marginTop: "10px",
+                  borderRadius: "8px",
+                }}
+              />
+            </div>
+          )}
+          {/* Show new image preview */}
+          {taskImage && (
+            <div className="image-preview">
+              <p>New image:</p>
+              <img
+                src={URL.createObjectURL(taskImage)}
+                alt="Preview"
+                style={{
+                  maxWidth: "200px",
+                  maxHeight: "200px",
+                  marginTop: "10px",
+                  borderRadius: "8px",
+                }}
+              />
+            </div>
+          )}
         </div>
 
-        <button type="submit" className="submit-task-button">
-          Create Task
+        <button type="submit" className="submit-task-button" disabled={loading}>
+          {loading
+            ? isEditMode
+              ? "Updating Task..."
+              : "Creating Task..."
+            : isEditMode
+            ? "Update Task"
+            : "Create Task"}
         </button>
-
       </form>
     </div>
   );

@@ -1,49 +1,70 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  // --- Add state for tasks ---
-  const [tasks, setTasks] = useState([]); 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
+  // Restore login session on refresh
   useEffect(() => {
-    const storedUser = localStorage.getItem('hirehelper_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem("hirehelper_user");
+      const storedToken = localStorage.getItem("token");
+
+      if (storedUser && storedUser !== "undefined" && storedToken) {
+        setUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Failed to parse user from localStorage", error);
+
+      // Cleanup corrupted values
+      localStorage.removeItem("hirehelper_user");
+      localStorage.removeItem("token");
     }
   }, []);
 
-  const login = (userData) => {
+  // LOGIN FUNCTION — FIXED
+  const login = (response) => {
+    if (!response || !response.user || !response.token) {
+      console.error("Invalid login response:", response);
+      return;
+    }
+
+    const userData = response.user;
+    const token = response.token;
+
+    localStorage.setItem("hirehelper_user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
+
     setUser(userData);
-    localStorage.setItem('hirehelper_user', JSON.stringify(userData));
+    setIsAuthenticated(true);
+
+    navigate("/dashboard");
   };
 
+  // LOGOUT FUNCTION
   const logout = () => {
+    localStorage.removeItem("hirehelper_user");
+    localStorage.removeItem("token");
+
     setUser(null);
-    setTasks([]); // Clear tasks on logout
-    localStorage.removeItem('hirehelper_user');
-    navigate('/login');
+    setIsAuthenticated(false);
+
+    navigate("/login");
   };
 
-  // --- Function to add a task to our list ---
-  const addTask = (newTask) => {
-    setTasks((prevTasks) => [newTask, ...prevTasks]);
+  const value = {
+    user,
+    isAuthenticated,
+    login,
+    logout,
   };
 
-  // The value to be passed to all children
-  // --- Pass tasks and addTask ---
-  const value = { user, login, logout, tasks, addTask };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);

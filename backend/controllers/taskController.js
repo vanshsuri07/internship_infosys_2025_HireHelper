@@ -12,6 +12,7 @@ exports.createTask = async (req, res) => {
       end_time,
       picture,
       status,
+      category,
     } = req.body;
 
     if (!title || !description || !location || !start_time) {
@@ -22,6 +23,7 @@ exports.createTask = async (req, res) => {
       });
     }
 
+    // Only validate end_time if it's provided and not empty
     if (end_time && new Date(end_time) <= new Date(start_time)) {
       return res.status(400).json({
         success: false,
@@ -35,9 +37,10 @@ exports.createTask = async (req, res) => {
       description,
       location,
       start_time,
-      end_time,
+      end_time: end_time || null, // Optional
       picture: picture || "",
       status: status || "open",
+      category: category || "Other",
     });
 
     await task.populate("user", "name email");
@@ -63,6 +66,7 @@ exports.getAllTasks = async (req, res) => {
     const {
       status,
       location,
+      category,
       start_date,
       end_date,
       sort = "-createdAt",
@@ -70,57 +74,46 @@ exports.getAllTasks = async (req, res) => {
       limit = 10,
     } = req.query;
 
-    // Build query object
     const query = {};
 
-    // Filter by status
-    if (status) {
-      query.status = status;
-    }
+    // EXCLUDE user's own tasks
+    query.user = { $ne: req.user._id };
 
-    // Filter by location
+    if (status) query.status = status;
+
+    if (category) query.category = category;
+
     if (location) {
       query.location = { $regex: location, $options: "i" };
     }
 
-    // Filter by date range
     if (start_date || end_date) {
       query.start_time = {};
-      if (start_date) {
-        query.start_time.$gte = new Date(start_date);
-      }
-      if (end_date) {
-        query.start_time.$lte = new Date(end_date);
-      }
+      if (start_date) query.start_time.$gte = new Date(start_date);
+      if (end_date) query.start_time.$lte = new Date(end_date);
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query with pagination
     const tasks = await Task.find(query)
       .populate("user", "name email")
       .sort(sort)
       .skip(skip)
       .limit(limitNum);
 
-    // Get total count for pagination
     const totalTasks = await Task.countDocuments(query);
     const totalPages = Math.ceil(totalTasks / limitNum);
 
     res.status(200).json({
       success: true,
-      message: "Tasks retrieved successfully",
       data: tasks,
       pagination: {
         currentPage: pageNum,
         totalPages,
         totalTasks,
         limit: limitNum,
-        hasNextPage: pageNum < totalPages,
-        hasPrevPage: pageNum > 1,
       },
     });
   } catch (error) {
@@ -136,29 +129,34 @@ exports.getAllTasks = async (req, res) => {
 //Get My Tasks
 exports.getMyTasks = async (req, res) => {
   try {
-    const { status, sort = "-createdAt", page = 1, limit = 10 } = req.query;
+    const {
+      status,
+      category,
+      sort = "-createdAt",
+      page = 1,
+      limit = 10,
+    } = req.query;
 
-    // Build query object for current user
     const query = { user: req.user._id };
 
-    // Filter by status
     if (status) {
       query.status = status;
     }
 
-    // Calculate pagination
+    if (category) {
+      query.category = category;
+    }
+
     const pageNum = parseInt(page, 10);
     const limitNum = parseInt(limit, 10);
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query with pagination
     const tasks = await Task.find(query)
       .populate("user", "name email")
       .sort(sort)
       .skip(skip)
       .limit(limitNum);
 
-    // Get total count for pagination
     const totalTasks = await Task.countDocuments(query);
     const totalPages = Math.ceil(totalTasks / limitNum);
 
@@ -190,7 +188,6 @@ exports.getTaskById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -234,9 +231,9 @@ exports.updateTask = async (req, res) => {
       end_time,
       picture,
       status,
+      category,
     } = req.body;
 
-    // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -244,7 +241,6 @@ exports.updateTask = async (req, res) => {
       });
     }
 
-    // Find task
     const task = await Task.findById(id);
 
     if (!task) {
@@ -254,7 +250,6 @@ exports.updateTask = async (req, res) => {
       });
     }
 
-    // Check if user owns the task
     if (task.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -262,7 +257,7 @@ exports.updateTask = async (req, res) => {
       });
     }
 
-    // Validate end_time is after start_time
+    // Validate end_time only if provided and not empty
     const newStartTime = start_time ? new Date(start_time) : task.start_time;
     const newEndTime = end_time ? new Date(end_time) : task.end_time;
 
@@ -273,18 +268,16 @@ exports.updateTask = async (req, res) => {
       });
     }
 
-    // Update fields
     if (title !== undefined) task.title = title;
     if (description !== undefined) task.description = description;
     if (location !== undefined) task.location = location;
     if (start_time !== undefined) task.start_time = start_time;
-    if (end_time !== undefined) task.end_time = end_time;
+    if (end_time !== undefined) task.end_time = end_time || null;
     if (picture !== undefined) task.picture = picture;
     if (status !== undefined) task.status = status;
+    if (category !== undefined) task.category = category;
 
     await task.save();
-
-    // Populate user details
     await task.populate("user", "name email");
 
     res.status(200).json({
@@ -307,7 +300,6 @@ exports.deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -315,7 +307,6 @@ exports.deleteTask = async (req, res) => {
       });
     }
 
-    // Find task
     const task = await Task.findById(id);
 
     if (!task) {
@@ -325,7 +316,6 @@ exports.deleteTask = async (req, res) => {
       });
     }
 
-    // Check if user owns the task
     if (task.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
