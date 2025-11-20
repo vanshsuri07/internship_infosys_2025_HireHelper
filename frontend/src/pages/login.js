@@ -7,6 +7,7 @@ import welcomeBackground from "../assets/HireHelper_bg.jpeg";
 import logoImage from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext"; // Import useAuth
 import { IoArrowBack } from "react-icons/io5";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth(); // Get the login function
-
+  const [showPassword, setShowPassword] = useState(false);
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,17 +72,30 @@ function Login() {
           </div>
 
           <div className="input-group">
-            <label>Password</label>
-            <input
-              type="password"
-              placeholder="••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <label htmlFor="password">Password</label>
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+              />
+              <button
+                type="button"
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex="-1"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
-          <p className="forgot-password">Forget Password?</p>
+          <a href="/forgot-password" className="forgot-password">
+            Forget Password?
+          </a>
 
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

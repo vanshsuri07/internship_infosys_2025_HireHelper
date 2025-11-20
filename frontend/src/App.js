@@ -31,7 +31,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Set signup as the default page */}
         <Route path="/" element={<Navigate to="/signup" replace />} />

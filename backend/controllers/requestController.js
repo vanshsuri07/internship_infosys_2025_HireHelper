@@ -6,8 +6,14 @@ const Notification = require("../models/Notification");
 // Send a request for a task
 exports.sendRequest = async (req, res) => {
   try {
-    const { taskId } = req.body;
+    const { taskId, message } = req.body;
     const task = await Task.findById(taskId);
+
+    if (!message) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Message is required" });
+    }
 
     if (!task)
       return res
@@ -31,6 +37,7 @@ exports.sendRequest = async (req, res) => {
     const request = await Request.create({
       task: taskId,
       requester: req.user._id,
+      message,
     });
 
     // Create notification for task owner
@@ -49,13 +56,19 @@ exports.sendRequest = async (req, res) => {
 exports.getReceivedRequests = async (req, res) => {
   try {
     const requests = await Request.find()
-      .populate("task")
-      .populate("requester", "email")
-      .where("task.user")
-      .equals(req.user._id);
+      .populate({
+        path: "task",
+        match: { user: req.user._id },
+      })
+      .populate("requester", "email firstName lastName");
 
-    res.json({ success: true, requests });
+    const filtered = requests.filter((r) => r.task !== null);
+
+    console.log("🟦 Filtered received requests:", filtered.length);
+
+    res.json({ success: true, requests: filtered });
   } catch (error) {
+    console.log("❌ ERROR:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -63,10 +76,16 @@ exports.getReceivedRequests = async (req, res) => {
 // View all requests sent by you
 exports.getSentRequests = async (req, res) => {
   try {
-    const requests = await Request.find({ requester: req.user._id }).populate(
-      "task",
-      "title location status"
-    );
+    const requests = await Request.find({ requester: req.user._id })
+      .populate({
+        path: "task",
+        select: "title location status start_time end_time picture description",
+        populate: {
+          path: "user",
+          select: "firstName lastName email profilePicture",
+        },
+      })
+      .sort({ createdAt: -1 });
 
     res.json({ success: true, requests });
   } catch (error) {

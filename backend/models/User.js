@@ -20,15 +20,23 @@ const UserSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    profileImageUrl: {
+      type: String,
+      default: null,
+    },
     password: {
       type: String,
       required: true,
     },
+
     isVerified: {
       type: Boolean,
       default: false,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
+
   {
     timestamps: true,
   }

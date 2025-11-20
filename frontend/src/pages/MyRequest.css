@@ -1,0 +1,307 @@
+.my-requests-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.my-requests-header {
+  margin-bottom: 2rem;
+}
+
+.my-requests-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+/* Request List */
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Request Card */
+.request-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.request-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Card Header */
+.request-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: linear-gradient(to right, #f8fafc, #ffffff);
+}
+
+.request-card-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.request-task-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+}
+
+.request-card-info {
+  flex: 1;
+}
+
+.request-task-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.25rem 0;
+}
+
+.request-task-owner {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status-badge-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge-accepted {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Card Body */
+.request-card-body {
+  padding: 1.5rem;
+}
+
+.request-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.request-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.detail-icon {
+  color: #3b82f6;
+  font-size: 1rem;
+}
+
+/* Message Box */
+.request-message-box {
+  background-color: #f8fafc;
+  border-left: 3px solid #3b82f6;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.message-icon {
+  color: #3b82f6;
+}
+
+.message-text {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Task Preview Image */
+.request-task-preview {
+  padding: 0;
+  border-top: 1px solid #f1f5f9;
+}
+
+.preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* No Requests Card */
+.no-requests-card {
+  background: white;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.no-requests-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.no-requests-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.no-requests-subtext {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .my-requests-container {
+    padding: 1rem;
+  }
+
+  .my-requests-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .request-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .request-card-left {
+    width: 100%;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .request-details {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .preview-image {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .request-task-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .request-task-title {
+    font-size: 1.1rem;
+  }
+
+  .request-card-body {
+    padding: 1rem;
+  }
+}
+
+/* Add to MyRequest.css */
+
+.task-owner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+
+.owner-icon {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.owner-name {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.owner-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.owner-initials {
+  width: 38px;
+  height: 38px;
+  background: #4b6cb7;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+

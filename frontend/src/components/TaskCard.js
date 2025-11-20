@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_PATHS } from "../api/apipath";
 import "./TaskCard.css";
-import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaUser } from "react-icons/fa";
+import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 const PLACEHOLDER_IMAGE =
@@ -19,6 +19,7 @@ function TaskCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(task.status);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [requestSent, setRequestSent] = useState(task.requestSent || false);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -109,8 +110,18 @@ function TaskCard({
   };
 
   const handleEdit = () => navigate(`/dashboard/addtask/${task._id}`);
-  const handleRequest = () =>
-    onRequest ? onRequest(task._id) : navigate(`/dashboard/tasks/${task._id}`);
+
+  const handleRequest = async () => {
+    if (onRequest) {
+      const success = await onRequest(task);
+      // If the request was successful, update the local state
+      if (success !== false) {
+        setRequestSent(true);
+      }
+    } else {
+      navigate(`/dashboard/tasks/${task._id}`);
+    }
+  };
 
   const imageUrl =
     task.picture && task.picture.trim() !== ""
@@ -210,8 +221,14 @@ function TaskCard({
               </>
             ) : (
               onRequest && (
-                <button className="request-button" onClick={handleRequest}>
-                  Request to Help
+                <button
+                  className={
+                    requestSent ? "request-sent-button" : "btn-request"
+                  }
+                  onClick={handleRequest}
+                  disabled={requestSent}
+                >
+                  {requestSent ? "Request Sent ✓" : "Request to Help"}
                 </button>
               )
             )}

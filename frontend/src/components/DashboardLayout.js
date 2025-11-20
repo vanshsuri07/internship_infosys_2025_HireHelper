@@ -1,11 +1,9 @@
-import React from "react";
-// 1. Import Outlet AND useLocation
+import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
-import Header from "./Header"; // 2. Import Header
+import Header from "./Header";
 import "./Dashboard.css";
 
-// 3. This object maps your URL paths to the correct titles
 const pageTitles = {
   "/dashboard/feed": {
     title: "Feed",
@@ -21,11 +19,11 @@ const pageTitles = {
   },
   "/dashboard/myrequests": {
     title: "My Requests",
-    subtitle: "Manage the tasks you have posted",
+    subtitle: "Manage the tasks you have requested",
   },
   "/dashboard/addtask": {
     title: "Add Task",
-    subtitle: "Create a new task for others to help with",
+    subtitle: "Create a new task",
   },
   "/dashboard/settings": {
     title: "Settings",
@@ -34,10 +32,9 @@ const pageTitles = {
 };
 
 function DashboardLayout() {
-  // 4. Get the current location (URL)
   const location = useLocation();
+  const [search, setSearch] = useState("");
 
-  // 5. Find the correct title and subtitle from our object
   const currentTitle = pageTitles[location.pathname]?.title || "Dashboard";
   const currentSubtitle =
     pageTitles[location.pathname]?.subtitle || "Welcome to Hire-a-Helper";
@@ -45,13 +42,18 @@ function DashboardLayout() {
   return (
     <div className="dashboard-container">
       <Sidebar />
-      <main className="dashboard-main">
-        {/* 6. Render the Header here, passing the titles as props */}
-        <Header title={currentTitle} subtitle={currentSubtitle} />
 
-        {/* 7. The content area for your pages */}
+      <main className="dashboard-main">
+        {/* pass search handler */}
+        <Header
+          title={currentTitle}
+          subtitle={currentSubtitle}
+          onSearch={setSearch}
+        />
+
         <div className="dashboard-content">
-          <Outlet /> {/* Child pages (Feed, MyTasks) appear here */}
+          {/* pass search value to child pages */}
+          <Outlet context={{ search }} />
         </div>
       </main>
     </div>

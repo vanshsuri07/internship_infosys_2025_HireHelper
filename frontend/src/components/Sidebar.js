@@ -93,7 +93,20 @@ function Sidebar() {
       <div className="sidebar-bottom">
         {user && (
           <div className="user-profile">
-            <FaUserCircle className="profile-icon" />
+            {/* Profile Image or Initials */}
+            {user.profileImage ? (
+              <img
+                src={user.profileImage}
+                alt="Profile"
+                className="profile-photo"
+              />
+            ) : (
+              <div className="profile-initials">
+                {user.firstName?.[0]?.toUpperCase() || ""}
+                {user.lastName?.[0]?.toUpperCase() || ""}
+              </div>
+            )}
+
             <div className="profile-details">
               <span className="profile-name">
                 {user.firstName
@@ -104,6 +117,7 @@ function Sidebar() {
                 {user.email || "user@example.com"}
               </span>
             </div>
+
             <button onClick={logout} className="logout-button">
               <FaSignOutAlt />
             </button>

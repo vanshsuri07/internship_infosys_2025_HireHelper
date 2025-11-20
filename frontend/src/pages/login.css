@@ -94,7 +94,10 @@
   margin-top: 20px;
   align-self: center;
 }
-
+.password-input-wrapper input:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
 /* --- Welcome Side (RIGHT) --- */
 .welcome-side {
   flex: 1; 

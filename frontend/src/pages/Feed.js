@@ -3,12 +3,19 @@ import axios from "axios";
 import TaskCard from "../components/TaskCard";
 import "./Feed.css";
 import { API_PATHS } from "../api/apipath";
-import { FaClipboardList, FaRegSadTear } from "react-icons/fa"; // Added for icons
-
+import { FaClipboardList } from "react-icons/fa"; // Added for icons
+import RequestModal from "../components/RequestModal";
+import { useOutletContext } from "react-router-dom";
 function FeedPage() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [activeTask, setActiveTask] = useState(null);
+  const { search } = useOutletContext();
 
+  const filtered = tasks.filter((t) =>
+    t.title.toLowerCase().includes(search.toLowerCase())
+  );
   // Fetch all tasks
   useEffect(() => {
     const fetchTasks = async () => {
@@ -29,18 +36,27 @@ function FeedPage() {
 
     fetchTasks();
   }, []);
+  const openRequestModal = (taskId) => {
+    setActiveTask(taskId);
+    setShowModal(true);
+  };
 
-  const handleRequest = async (taskId) => {
+  const sendRequest = async (message) => {
     try {
       const token = localStorage.getItem("token");
+
       await axios.post(
-        "http://localhost:5000/api/requests", // Ideally move this URL to API_PATHS too
-        { taskId },
+        `${API_PATHS.REQUESTS.CREATE_REQUEST}`,
+        { taskId: activeTask, message },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Request sent successfully!");
-    } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+
+      alert("Request sent!");
+      setShowModal(false);
+      return true; // Return true on success
+    } catch (err) {
+      alert(err.response?.data?.message || "Error sending request");
+      return false; // Return false on error
     }
   };
 
@@ -84,14 +100,20 @@ function FeedPage() {
             </p>
           </div>
         ) : (
-          tasks.map((task) => (
+          filtered.map((task) => (
             <TaskCard
               key={task._id}
               task={task}
-              onRequest={handleRequest}
               showActions={true}
+              onRequest={() => openRequestModal(task._id)}
             />
           ))
+        )}
+        {showModal && (
+          <RequestModal
+            onClose={() => setShowModal(false)}
+            onSend={sendRequest}
+          />
         )}
       </div>
     </div>

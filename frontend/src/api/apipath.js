@@ -19,4 +19,16 @@ export const API_PATHS = {
     UPDATE_TASK: (taskId) => `${BASE_URL}/api/tasks/${taskId}`,
     DELETE_TASK: (taskId) => `${BASE_URL}/api/tasks/${taskId}`,
   },
+  REQUESTS: {
+    CREATE_REQUEST: `${BASE_URL}/api/requests`,
+    GET_MY_REQUESTS: `${BASE_URL}/api/requests/received`,
+    GET_SENT_REQUESTS: `${BASE_URL}/api/requests/sent`,
+    UPDATE_REQUEST_STATUS: (requestId) =>
+      `${BASE_URL}/api/requests/${requestId}`,
+  },
+  NOTIFICATION: {
+    GET_NOTIFICATIONS: `${BASE_URL}/api/notifications`,
+    MARK_AS_READ: (notificationId) =>
+      `${BASE_URL}/api/notifications/${notificationId}/read`,
+  },
 };

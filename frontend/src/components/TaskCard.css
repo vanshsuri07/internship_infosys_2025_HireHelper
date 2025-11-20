@@ -190,3 +190,8 @@
 .delete-button:hover {
   background: #fee2e2;
 }
+.request-sent-button {
+  background: #28a745 !important; /* green */
+  color: white !important;
+  cursor: not-allowed !important  ;
+}

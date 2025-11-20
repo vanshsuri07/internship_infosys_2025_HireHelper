@@ -6,6 +6,7 @@ import "./SignUp.css";
 import welcomeBackground from "../assets/HireHelper_bg.jpeg";
 import logoImage from "../assets/logo.png";
 import { IoArrowBack } from "react-icons/io5";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -13,7 +14,7 @@ function SignUp() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -127,14 +128,25 @@ function SignUp() {
           </div>
 
           <div className="input-group">
-            <label>Password</label>
-            <input
-              type="password"
-              placeholder="••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <label htmlFor="password">Password</label>
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter new password (min 6 characters)"
+                required
+              />
+              <button
+                type="button"
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex="-1"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="signup-button">

@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
-import axiosInstance from '../api/axiosInstance'; // Assuming you have this
-import { Link } from 'react-router-dom';
-import './PasswordReset.css'; // New CSS file
-import welcomeBackground from '../assets/HireHelper_bg.jpeg';
-import logoImage from '../assets/logo.png';
+import React, { useState } from "react";
+import axiosInstance from "../api/axiosInstance"; // Assuming you have this
+import { Link } from "react-router-dom";
+import "./PasswordReset.css"; // New CSS file
+import welcomeBackground from "../assets/HireHelper_bg.jpeg";
+import logoImage from "../assets/logo.png";
+import { API_PATHS } from "../api/apipath";
 
 function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState(''); // For success/error messages
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState(""); // For success/error messages
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
 
     try {
-      // This is the URL from your backend routes
-      const backendURL = 'http://localhost:5000/api/users/forgot-password';
-      
-      const { data } = await axiosInstance.post(backendURL, { email });
+      const { data } = await axiosInstance.post(
+        `${API_PATHS.AUTH.FORGOT_PASSWORD}`,
+        { email }
+      );
 
-      setMessage(data.message || "Password reset link sent! Please check your email.");
+      setMessage(
+        data.message || "Password reset link sent! Please check your email."
+      );
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send email. Please try again.");
+      setError(
+        err.response?.data?.message || "Failed to send email. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -46,8 +51,8 @@ function ForgotPassword() {
           <form onSubmit={handleSubmit}>
             <h2>Forgot Password</h2>
             <p className="pr-subtitle">
-              Please enter your e-mail address. You will receive an <br></br>e-mail 
-              along with a link which can be used to reset your password.
+              Please enter your e-mail address. You will receive an <br></br>
+              e-mail along with a link which can be used to reset your password.
             </p>
 
             {/* Show success or error messages */}
@@ -69,9 +74,10 @@ function ForgotPassword() {
             <button type="submit" className="pr-button" disabled={loading}>
               {loading ? "Sending..." : "Submit"}
             </button>
-            
+
             <p className="pr-help-link">
-              I am not receiving password reset email. <Link to="/help">Need help?</Link>
+              I am not receiving password reset email.{" "}
+              <Link to="/help">Need help?</Link>
             </p>
           </form>
         </div>
