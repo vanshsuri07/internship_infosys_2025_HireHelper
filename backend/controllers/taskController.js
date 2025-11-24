@@ -31,14 +31,23 @@ exports.createTask = async (req, res) => {
       });
     }
 
+    // Get picture URL from uploaded file or use provided URL
+    let pictureUrl = "";
+    if (req.file) {
+      // req.file.path contains the Cloudinary URL when using CloudinaryStorage
+      pictureUrl = req.file.path;
+    } else if (picture && picture.trim() !== "") {
+      pictureUrl = picture;
+    }
+
     const task = await Task.create({
       user: req.user._id,
       title,
       description,
       location,
       start_time,
-      end_time: end_time || null, // Optional
-      picture: picture || "",
+      end_time: end_time || null,
+      picture: pictureUrl,
       status: status || "open",
       category: category || "Other",
     });
@@ -273,9 +282,15 @@ exports.updateTask = async (req, res) => {
     if (location !== undefined) task.location = location;
     if (start_time !== undefined) task.start_time = start_time;
     if (end_time !== undefined) task.end_time = end_time || null;
-    if (picture !== undefined) task.picture = picture;
     if (status !== undefined) task.status = status;
     if (category !== undefined) task.category = category;
+
+    // Handle image update - req.file.path contains the Cloudinary URL
+    if (req.file) {
+      task.picture = req.file.path;
+    } else if (picture !== undefined && picture.trim() !== "") {
+      task.picture = picture;
+    }
 
     await task.save();
     await task.populate("user", "name email");
