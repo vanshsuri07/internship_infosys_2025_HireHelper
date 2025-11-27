@@ -64,3 +64,19 @@
   width: 35%;
   align-self: center;
 }
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+  .add-task-container {
+    padding: 20px; /* Less padding */
+  }
+
+  .form-row {
+    flex-direction: column; /* Stack inputs vertically */
+    gap: 0;
+  }
+
+  .submit-task-button {
+    width: 100%; /* Full width button on mobile */
+  }
+}

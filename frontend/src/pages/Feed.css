@@ -1,8 +1,5 @@
 :root {
-  --bg-page: #f8fafc;
-  --text-main: #1f2937;
-  --text-muted: #64748b;
-  --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+  --bg-page: #ffffff;
 }
 
 /* Main Container */
@@ -14,38 +11,10 @@
   background-color: var(--bg-page);
 }
 
-/* Header Section */
-.feed-header {
-  text-align: center;
-  margin-bottom: 3.5rem;
-  position: relative;
-}
-
-.feed-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.02em;
-  /* Modern Gradient Text */
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-}
-
-.feed-subtitle {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
 /* Grid Layout - Matches TaskCard logic */
 .feed-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   padding-bottom: 3rem;
 }

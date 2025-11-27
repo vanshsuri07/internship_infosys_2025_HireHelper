@@ -2,19 +2,20 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Requests.css";
 import { API_PATHS } from "../api/apipath";
+import { FaStar, FaClock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
 
 function Requests() {
   const [received, setReceived] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
+  // --- 1. FETCH REAL DATA ---
   const fetchRequests = async () => {
     try {
       const resReceived = await axios.get(
         `${API_PATHS.REQUESTS.GET_MY_REQUESTS}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setReceived(resReceived.data.requests || []);
     } catch (err) {
       console.error("Error fetching requests:", err);
@@ -27,6 +28,7 @@ function Requests() {
     fetchRequests();
   }, []);
 
+  // --- 2. HANDLE ACCEPT/DECLINE ---
   const updateStatus = async (reqId, newStatus) => {
     try {
       await axios.patch(
@@ -34,81 +36,109 @@ function Requests() {
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      fetchRequests();
-      alert(`Request ${newStatus} successfully`);
+      fetchRequests(); // Refresh list
     } catch (err) {
       console.error("Error updating request:", err);
+      alert("Failed to update status");
     }
   };
 
-  if (loading) return <p className="loading">Loading requests...</p>;
+  const formatTime = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
+  if (loading) return <div className="requests-container"><p className="loading">Loading requests...</p></div>;
 
   return (
     <div className="requests-container">
-      <h2 className="section-title">Incoming Requests</h2>
+      <div className="req-header-section">
+        <h2>Incoming Requests</h2>
+        <p>People who want to help with your tasks</p>
+      </div>
 
-      {received.length === 0 ? (
-        <p className="empty-text">No one has requested your tasks yet.</p>
-      ) : (
-        <div className="req-list">
-          {received.map((req) => (
+      <div className="req-list">
+        {received.length === 0 ? (
+          <p className="no-requests">No incoming requests found.</p>
+        ) : (
+          received.map((req) => (
             <div key={req._id} className="req-card">
-              {/* Left side: Avatar */}
-              <div className="req-avatar">
-                <div className="avatar-circle">
-                  {req.requester.email[0].toUpperCase()}
+              
+              {/* --- LEFT: AVATAR --- */}
+              <div className="req-avatar-col">
+                <div className="req-avatar-placeholder">
+                  {/* Show first letter of name */}
+                  {req.requester?.firstName ? req.requester.firstName[0].toUpperCase() : <FaUser />}
                 </div>
               </div>
 
-              {/* Main content */}
-              <div className="req-content">
-                <div className="req-header">
+              {/* --- MIDDLE: CONTENT --- */}
+              <div className="req-content-col">
+                
+                {/* Name & Fake Rating */}
+                <div className="req-top-row">
                   <h3 className="req-name">
-                    {req.requester.firstName} {req.requester.lastName}
+                    {req.requester?.firstName} {req.requester?.lastName}
                   </h3>
+                  <div className="req-rating-badge">
+                    <FaStar className="star-icon" />
+                    <span className="rating-num">4.8</span> {/* Placeholder Rating */}
+                    <span className="review-count">(12 reviews)</span>
+                  </div>
                 </div>
 
-                <span className="req-message">{req.message}</span>
+                {/* Message */}
+                <p className="req-message">
+                  {req.message || "I'd love to help with this task! Available immediately."}
+                </p>
 
-                {/* Task detail box */}
-                <div className="task-box">
-                  <p>
-                    <strong>Requesting for:</strong>
-                  </p>
-                  <p>{req.task.title}</p>
+                {/* Grey Task Box */}
+                <div className="req-task-box">
+                  <span className="req-task-label">Requesting for:</span>
+                  <span className="req-task-title">{req.task?.title || "Unknown Task"}</span>
                 </div>
 
-                {/* Footer row */}
-                <div className="req-footer">
-                  <span className="req-time">
-                    • {new Date(req.createdAt).toLocaleString()}
-                  </span>
+                {/* Meta Info */}
+                <div className="req-meta-row">
+                  <div className="req-meta-item">
+                    <FaClock /> <span>{formatTime(req.createdAt)}</span>
+                  </div>
+                  <div className="req-meta-item">
+                    <FaMapMarkerAlt /> <span>Within 5 miles</span> {/* Placeholder Distance */}
+                  </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              {req.status === "pending" && (
-                <div className="req-actions">
-                  <button
-                    className="accept-btn"
-                    onClick={() => updateStatus(req._id, "accepted")}
-                  >
-                    Accept
-                  </button>
+              {/* --- RIGHT: BUTTONS --- */}
+              <div className="req-actions-col">
+                {req.status === 'pending' ? (
+                  <>
+                    <button 
+                      className="req-btn accept-btn" 
+                      onClick={() => updateStatus(req._id, "accepted")}
+                    >
+                      Accept
+                    </button>
+                    <button 
+                      className="req-btn decline-btn" 
+                      onClick={() => updateStatus(req._id, "rejected")}
+                    >
+                      Decline
+                    </button>
+                  </>
+                ) : (
+                  <span className={`status-label ${req.status}`}>{req.status}</span>
+                )}
+              </div>
 
-                  <button
-                    className="decline-btn"
-                    onClick={() => updateStatus(req._id, "rejected")}
-                  >
-                    Decline
-                  </button>
-                </div>
-              )}
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 }

@@ -1,186 +1,150 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./MyRequest.css";
+import "./MyRequests.css";
 import { API_PATHS } from "../api/apipath";
-import { FaMapMarkerAlt, FaClock, FaEnvelope, FaUser } from "react-icons/fa";
+import { FaClock, FaMapMarkerAlt } from "react-icons/fa";
+
+// 1. Define a placeholder image
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/600x350.png?text=No+Image";
 
 function MyRequests() {
-  const [requests, setRequests] = useState([]);
+  const [sent, setSent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(`${API_PATHS.REQUESTS.GET_SENT_REQUESTS}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        console.log("Requests data:", res.data); // Debug: Check structure
-        setRequests(res.data.requests || []);
-      } catch (error) {
-        console.error("Error fetching sent requests:", error);
-      } finally {
-        setLoading(false);
+  const fetchSentRequests = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(
+        `${API_PATHS.REQUESTS.GET_SENT_REQUESTS}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      let requestsData = [];
+      if (Array.isArray(res.data)) {
+        requestsData = res.data;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        requestsData = res.data.data;
+      } else if (res.data && Array.isArray(res.data.requests)) {
+        requestsData = res.data.requests;
       }
-    };
-
-    fetchRequests();
-  }, []);
-
-  const getStatusBadgeClass = (status) => {
-    const statusMap = {
-      pending: "status-badge-pending",
-      accepted: "status-badge-accepted",
-      rejected: "status-badge-rejected",
-    };
-    return statusMap[status?.toLowerCase()] || "status-badge-pending";
+      setSent(requestsData);
+    } catch (err) {
+      console.error("Error fetching sent requests:", err);
+      setError("Failed to load your sent requests.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchSentRequests();
+  }, []);
+
+  // 2. Helper to format dates
   const formatDateTime = (dateString) => {
-    if (!dateString) return "Not specified";
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
-      hour: "2-digit",
+      hour: "numeric",
       minute: "2-digit",
     });
   };
 
-  // Helper to get task owner name
-  const getTaskOwnerName = (request) => {
-    const taskUser = request.task?.user;
-    if (!taskUser) return "Unknown Owner";
+  // 3. NEW: Smart Image URL Helper (Matches TaskCard logic)
+  const getImageUrl = (picture) => {
+    if (!picture || picture.trim() === "") return null; // Return null to hide image container
+    
+    // If it's Base64 or a full URL, return as-is
+    if (picture.startsWith("data:") || picture.startsWith("http")) {
+      return picture;
+    }
 
-    const firstName = taskUser.firstName || "";
-    const lastName = taskUser.lastName || "";
-    return `${firstName} ${lastName}`.trim() || "Unknown Owner";
+    // If it's a relative path (Windows or Mac), fix slashes and prepend localhost
+    const cleanPath = picture.replace(/\\/g, "/");
+    const path = cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`;
+    return `http://localhost:5000${path}`;
   };
 
-  // Helper to get task owner profile picture
-  const getTaskOwnerPicture = (request) => {
-    return request.task?.user?.profilePicture || null;
-  };
-
-  if (loading) {
-    return (
-      <div className="my-requests-container">
-        <div className="loading-spinner">Loading your requests...</div>
-      </div>
-    );
-  }
+  if (loading) return <div className="my-requests-container"><p className="loading">Loading...</p></div>;
+  if (error) return <div className="my-requests-container"><p className="error-message">{error}</p></div>;
 
   return (
     <div className="my-requests-container">
-      <div className="my-requests-header">
-        <h1>My Requests</h1>
-        <p className="subtitle">Track the help requests you've sent</p>
+      <div className="header-section">
+        <h2>My Requests</h2>
+        <p>Track the help requests you've sent</p>
       </div>
 
-      <div className="requests-list">
-        {requests.length === 0 ? (
-          <div className="no-requests-card">
-            <div className="no-requests-icon">📭</div>
-            <p className="no-requests-text">
-              You haven't sent any requests yet.
-            </p>
-            <p className="no-requests-subtext">
-              Browse available tasks and send help requests to get started!
-            </p>
-          </div>
+      <div className="sent-list">
+        {sent.length === 0 ? (
+          <p className="no-data">You haven't sent any requests yet.</p>
         ) : (
-          requests.map((req) => (
-            <div className="request-card" key={req._id}>
-              <div className="request-card-header">
-                <div className="request-card-left">
-                  <div className="task-owner-info">
-                    {getTaskOwnerPicture(req) ? (
-                      // Show profile image
-                      <img
-                        src={getTaskOwnerPicture(req)}
-                        alt="Owner"
-                        className="owner-avatar"
-                      />
-                    ) : (
-                      // Show initials
-                      <div className="owner-initials">
-                        {req.task?.user?.firstName?.[0]?.toUpperCase() || ""}
-                        {req.task?.user?.lastName?.[0]?.toUpperCase() || ""}
+          sent.map((req) => {
+            const taskTitle = req.task?.title || "Unknown Task";
+            const taskCategory = req.task?.category || "General";
+            const ownerName = req.task?.user
+              ? `${req.task.user.firstName} ${req.task.user.lastName}`
+              : "Unknown User";
+            
+            // 4. Use the helper function here
+            const taskImageSrc = getImageUrl(req.task?.picture);
+            
+            const ownerInitial = ownerName.charAt(0).toUpperCase();
+
+            return (
+              <div key={req._id} className="sent-card">
+                <div className="card-header">
+                  <div className="user-info">
+                    <div className="avatar-circle">{ownerInitial}</div>
+                    <div>
+                      <div className="title-row">
+                        <h3 className="task-title">{taskTitle}</h3>
+                        <span className="category-tag">{taskCategory}</span>
                       </div>
-                    )}
-                  </div>
-                  <div className="request-card-info">
-                    <h3 className="request-task-title">
-                      {req.task?.title || "Task"}
-                    </h3>
-
-                    {/* Task Owner Information */}
-                    <div className="task-owner-info">
-                      {getTaskOwnerPicture(req) && (
-                        <img
-                          src={getTaskOwnerPicture(req)}
-                          alt="Owner"
-                          className="owner-avatar"
-                        />
-                      )}
-                      <FaUser className="owner-icon" />
-                      <span className="owner-name">
-                        Task Owner: {getTaskOwnerName(req)}
-                      </span>
+                      <p className="task-owner">Task owner: {ownerName}</p>
                     </div>
                   </div>
+                  <span className={`status-badge ${req.status}`}>
+                    {req.status}
+                  </span>
                 </div>
-                <span
-                  className={`status-badge ${getStatusBadgeClass(req.status)}`}
-                >
-                  {req.status || "Pending"}
-                </span>
-              </div>
 
-              <div className="request-card-body">
-                <div className="request-details">
-                  <div className="request-detail-item">
-                    <FaMapMarkerAlt className="detail-icon" />
-                    <span>{req.task?.location || "Remote"}</span>
-                  </div>
+                <div className="message-box">
+                  <strong>Your message:</strong>
+                  <p>{req.message}</p>
+                </div>
 
-                  <div className="request-detail-item">
-                    <FaClock className="detail-icon" />
-                    <span>Sent {formatDateTime(req.createdAt)}</span>
-                  </div>
-
-                  {req.task?.start_time && (
-                    <div className="request-detail-item">
-                      <FaClock className="detail-icon" />
-                      <span>Starts: {formatDateTime(req.task.start_time)}</span>
-                    </div>
+                <div className="meta-details">
+                  <span className="meta-item">
+                    <FaClock /> Sent {formatDateTime(req.createdAt)}
+                  </span>
+                  {req.task?.location && (
+                    <span className="meta-item">
+                      <FaMapMarkerAlt /> {req.task.location}
+                    </span>
                   )}
                 </div>
 
-                {req.message && (
-                  <div className="request-message-box">
-                    <div className="message-header">
-                      <FaEnvelope className="message-icon" />
-                      <span>Your message:</span>
-                    </div>
-                    <p className="message-text">{req.message}</p>
+                {/* 5. Render Image only if valid */}
+                {taskImageSrc && (
+                  <div className="task-image-container">
+                    <img
+                      src={taskImageSrc}
+                      alt={taskTitle}
+                      className="task-image"
+                      onError={(e) => {
+                        e.target.style.display = 'none'; // Hide if broken
+                      }}
+                    />
                   </div>
                 )}
               </div>
-
-              {req.task?.picture && (
-                <div className="request-task-preview">
-                  <img
-                    src={req.task.picture}
-                    alt={req.task.title}
-                    className="preview-image"
-                  />
-                </div>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

@@ -10,7 +10,7 @@
 /* --- Sidebar (Left Side) --- */
 .sidebar {
   width: 260px;
-  background-image: linear-gradient(to bottom, #e91594, #611a7b);
+  background-image: linear-gradient(to bottom, #e91695, #611a7b);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -106,18 +106,13 @@
   background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
-/* ... (end of sidebar styles) ... */
 
-
-/* --- Main Content Area (Right Side) --- */
 .dashboard-main {
-  flex: 1; /* Takes up rest of the space */
+  flex: 1; 
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevent this container from scrolling */
+  overflow: hidden; 
 }
-
-/* --- Header (Top of Right Side) --- */
 .header {
   height: 80px; 
   display: flex;
@@ -127,10 +122,10 @@
   background-image: linear-gradient(to right, #f6d3e2, #f8f4fd); 
   border-bottom: 1px solid #e0e0e0;
   box-sizing: border-box;
-  flex-shrink: 0; /* Prevents the header from shrinking */
+  flex-shrink: 0; 
 }
 
-/* ... (all your header-title, header-controls, etc. styles are unchanged) ... */
+
 .header-title h2 {
   margin: 0;
   font-size: 1.8rem;
@@ -169,17 +164,12 @@
   color: #e11d74; 
   cursor: pointer;
 }
-/* ... (end of header styles) ... */
-
-
-/* --- Content (Bottom of Right Side) --- */
 .dashboard-content {
-  flex: 1; /* Takes up rest of vertical space */
+  flex: 1; 
   padding: 30px;
-  background-color: #ffffff;
-  overflow-y: auto; /* Allows ONLY this area to scroll */
+  background-color: #ffffff !important;
+  overflow-y: auto; 
 }
-
 .header-notification {
   position: relative;
   font-size: 1.4rem;
@@ -288,4 +278,47 @@
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+}
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column; /* Stack sidebar on top (or hide it) */
+    overflow: auto; /* Allow scrolling */
+  }
+
+  .sidebar {
+    width: 100%; /* Full width sidebar */
+    height: auto; /* Height depends on content */
+    padding: 10px;
+    flex-direction: row; /* Horizontal icons for mobile */
+    overflow-x: auto; /* Scroll sideways if needed */
+  }
+
+  .sidebar-logo {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+  }
+
+  .sidebar-nav {
+    flex-direction: row; /* Links go sideways */
+    gap: 10px;
+  }
+
+  .nav-link {
+    padding: 8px;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+  
+  .nav-link span {
+    display: none; /* Hide text, show only icons to save space */
+  }
+
+  .sidebar-bottom {
+    display: none; /* Hide profile on mobile to save space */
+  }
+
+  .dashboard-content {
+    padding: 15px; /* Reduce padding on mobile */
+  }
 }

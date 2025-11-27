@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { API_PATHS } from "../api/apipath"; // Adjust the import path as needed
+import { API_PATHS } from "../api/apipath";
 import TaskCard from "../components/TaskCard";
 import "./MyTasks.css";
 
@@ -9,7 +9,7 @@ function MyTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(""); // Filter by status
+  const [statusFilter, setStatusFilter] = useState("");
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,14 +21,11 @@ function MyTasks() {
       setError(null);
 
       const token = localStorage.getItem("token");
-      console.log("Token in localStorage:", token);
-
       if (!token) {
         navigate("/login");
         return;
       }
 
-      // Build query params
       const params = new URLSearchParams({
         page: page.toString(),
         limit: "10",
@@ -56,7 +53,6 @@ function MyTasks() {
           "Failed to load tasks. Please try again."
       );
 
-      // If unauthorized, redirect to login
       if (error.response?.status === 401) {
         localStorage.removeItem("token");
         navigate("/login");
@@ -70,9 +66,9 @@ function MyTasks() {
     fetchMyTasks(currentPage, statusFilter);
   }, [currentPage, statusFilter]);
 
-  const handleStatusFilter = (status) => {
-    setStatusFilter(status);
-    setCurrentPage(1); // Reset to first page when filtering
+  const handleStatusFilter = (e) => {
+    setStatusFilter(e.target.value);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (newPage) => {
@@ -81,7 +77,6 @@ function MyTasks() {
   };
 
   const handleTaskDelete = () => {
-    // Refresh the list after task deletion
     fetchMyTasks(currentPage, statusFilter);
   };
 
@@ -108,7 +103,23 @@ function MyTasks() {
 
   return (
     <div className="my-tasks-container">
-      <div className="my-tasks-header">
+      
+      {/* --- TOOLBAR: Dropdown (Left) + Add Button (Right) --- */}
+      <div className="tasks-toolbar">
+        
+        {/* THE DROPDOWN MENU */}
+        <select 
+          className="filter-dropdown"
+          value={statusFilter}
+          onChange={handleStatusFilter}
+        >
+          <option value="">All Tasks</option>
+          <option value="open">Open</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        {/* THE ADD TASK BUTTON (Pink) */}
         <button
           className="add-task-button"
           onClick={() => navigate("/dashboard/addtask")}
@@ -117,41 +128,6 @@ function MyTasks() {
         </button>
       </div>
 
-      {/* Status Filter */}
-      <div className="filter-section">
-        <div className="filter-buttons">
-          <button
-            className={`filter-btn ${statusFilter === "" ? "active" : ""}`}
-            onClick={() => handleStatusFilter("")}
-          >
-            All
-          </button>
-          <button
-            className={`filter-btn ${statusFilter === "open" ? "active" : ""}`}
-            onClick={() => handleStatusFilter("open")}
-          >
-            Open
-          </button>
-          <button
-            className={`filter-btn ${
-              statusFilter === "in-progress" ? "active" : ""
-            }`}
-            onClick={() => handleStatusFilter("in-progress")}
-          >
-            In Progress
-          </button>
-          <button
-            className={`filter-btn ${
-              statusFilter === "completed" ? "active" : ""
-            }`}
-            onClick={() => handleStatusFilter("completed")}
-          >
-            Completed
-          </button>
-        </div>
-      </div>
-
-      {/* Tasks List */}
       <div className="my-tasks-list">
         {tasks.length > 0 ? (
           tasks.map((task) => (
@@ -171,7 +147,7 @@ function MyTasks() {
             </p>
             <button
               className="create-first-task-btn"
-              onClick={() => navigate("/dashboard/add-task")}
+              onClick={() => navigate("/dashboard/addtask")}
             >
               + Create Your First Task
             </button>
@@ -179,7 +155,6 @@ function MyTasks() {
         )}
       </div>
 
-      {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
         <div className="pagination">
           <button
@@ -189,12 +164,10 @@ function MyTasks() {
           >
             Previous
           </button>
-
           <span className="pagination-info">
             Page {pagination.currentPage} of {pagination.totalPages} (
             {pagination.totalTasks} tasks)
           </span>
-
           <button
             className="pagination-btn"
             onClick={() => handlePageChange(currentPage + 1)}

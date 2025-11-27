@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #4f46e5;
+  --primary-color: #e91594;
   --primary-soft: #e0e7ff;
   --text-main: #1f2937;
   --text-muted: #6b7280;
@@ -194,4 +194,48 @@
   background: #28a745 !important; /* green */
   color: white !important;
   cursor: not-allowed !important  ;
+}
+.btn-request {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color:  #d166a6; /* Theme Pink */
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-request:hover {
+  background-color: #e91594; /* Darker pink on hover */
+}
+
+/* 2. The Grey "Request Sent" Button (Disabled) */
+.request-sent-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  color: #555;
+  font-weight: bold;
+  cursor: not-allowed;
+}
+
+/* 3. The Status Badge (Top Right Corner) */
+.task-card-status-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 2; /* Ensures it sits on top of the image */
 }

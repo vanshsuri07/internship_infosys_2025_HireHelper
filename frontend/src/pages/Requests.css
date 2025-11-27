@@ -1,127 +1,219 @@
+/* Container */
 .requests-container {
-  width: 75%;
-  margin: auto;
-  padding: 20px 0;
-  font-family: "Inter", sans-serif;
+  width: 100%;          
+  max-width: 100%;    
+  margin: 0;            
+  padding: 20px 40px;   
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
 }
 
-.section-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  font-weight: 600;
+/* Header Text */
+.req-header-section {
+  margin-bottom: 25px;
 }
 
+.req-header-section h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #111;
+}
+
+.req-header-section p {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Card List */
 .req-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .req-card {
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   align-items: flex-start;
-  position: relative;
+  gap: 20px;
 }
 
-.req-avatar {
-  margin-top: 5px;
+/* --- Left: Avatar --- */
+.req-avatar-col {
+  flex-shrink: 0;
 }
 
-.avatar-circle {
+.req-avatar-placeholder {
   width: 48px;
   height: 48px;
-  background: #e0e7ff;
+  background-color: #f3f4f6;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #444;
+  color: #4b5563;
 }
 
-.req-content {
-  flex: 1;
-}
-
-.req-header {
+/* --- Middle: Content --- */
+.req-content-col {
+  flex: 1; 
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+}
+
+.req-top-row {
+  display: flex;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .req-name {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
 }
 
-.req-description {
-  margin: 10px 0;
-  color: #555;
-  line-height: 1.4;
-}
-
-.task-box {
-  background: #f4f4f4;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 10px 0;
-  border-left: 3px solid #4a90e2;
-}
-
-.req-footer {
-  font-size: 14px;
-  color: #666;
-  margin-top: 5px;
-}
-
-.req-actions {
+.req-rating-badge {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.star-icon { color: #fbbf24; }
+.rating-num { font-weight: 700; color: #111; }
+.review-count { color: #6b7280; }
+
+.req-message {
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+/* Grey Task Box */
+.req-task-box {
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.req-task-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.req-task-title {
+  display: block;
+  font-size: 0.95rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Meta Data */
+.req-meta-row {
+  display: flex;
+  gap: 20px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.req-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* --- Right: Buttons --- */
+.req-actions-col {
+  display: flex;
   gap: 10px;
+  margin-left: auto;
+}
+
+.req-btn {
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 40px; /* Ensure uniform height */
 }
 
 .accept-btn {
-  padding: 8px 14px;
-  background: #30c770;
-  color: #fff;
+  background-color: #22c55e; /* Green */
+  color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
 }
+.accept-btn:hover { background-color: #16a34a; }
 
 .decline-btn {
-  padding: 8px 14px;
-  background: #ff4d4f;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
+  background-color: #ffffff;
+  color: #374151;
+  border: 1px solid #d1d5db;
 }
+.decline-btn:hover { background-color: #f9fafb; border-color: #9ca3af; }
 
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+/* Status Labels (for accepted/rejected items) */
+.status-label {
   font-weight: bold;
-  color: white;
+  text-transform: capitalize;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+.status-label.accepted { background-color: #dcfce7; color: #166534; }
+.status-label.rejected { background-color: #fee2e2; color: #991b1b; }
+
+.loading, .no-requests {
+  text-align: center;
+  color: #666;
+  margin-top: 40px;
 }
 
-.status-badge.pending {
-  background: orange;
-}
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+  /* Stack the card content vertically */
+  .req-card {
+    flex-direction: column; 
+    align-items: stretch; /* Make children fill width */
+  }
 
-.status-badge.accepted {
-  background: #30c770;
-}
+  /* Make the avatar centered or top-left */
+  .req-avatar-col {
+    margin-bottom: 10px;
+  }
 
-.status-badge.rejected {
-  background: #ff4d4f;
+  /* Stack the meta info (Time & Distance) */
+  .req-meta-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Make buttons full width and stack them */
+  .req-actions-col {
+    width: 100%;
+    margin-top: 15px;
+    flex-direction: column;
+  }
+
+  .req-btn {
+    width: 100%; /* Full width buttons are easier to tap */
+  }
 }

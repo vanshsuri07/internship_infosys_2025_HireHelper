@@ -79,13 +79,6 @@ function FeedPage() {
 
   return (
     <div className="feed-container">
-      <div className="feed-header">
-        <h1 className="feed-title">Community Tasks</h1>
-        <p className="feed-subtitle">
-          Discover opportunities to help your neighbors. Browse the tasks below
-          and offer your assistance.
-        </p>
-      </div>
 
       <div className="feed-grid">
         {loading ? (

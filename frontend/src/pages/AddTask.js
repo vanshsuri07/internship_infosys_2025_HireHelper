@@ -13,8 +13,12 @@ function AddTask() {
   const [endDate, setEndDate] = useState("");
   const [endTime, setEndTime] = useState("");
   const [category, setCategory] = useState("");
-  const [taskImage, setTaskImage] = useState(null);
-  const [existingImage, setExistingImage] = useState("");
+  
+  // --- THESE ARE THE MISSING STATES ---
+  const [taskImage, setTaskImage] = useState(null); // Stores the file object
+  const [imagePreview, setImagePreview] = useState(""); // Stores the URL/Base64 for preview
+  // ------------------------------------
+
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -28,26 +32,61 @@ function AddTask() {
     }
   }, [taskId]);
 
+  // Helper: Convert File to Base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  // --- IMAGE HANDLING WITH SIZE CHECK ---
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      // 1. Check Size (Limit to 2MB)
+      const maxSizeInBytes = 10 * 1024 * 1024; 
+      if (file.size > maxSizeInBytes) {
+        alert("File is too large. Please select an image under 2MB.");
+        e.target.value = ""; // Clear input
+        setTaskImage(null);
+        setImagePreview("");
+        return;
+      }
+
+      // 2. Set the file state
+      setTaskImage(file);
+
+      // 3. Create Base64 for Preview and Sending
+      try {
+        const base64 = await convertToBase64(file);
+        setImagePreview(base64); 
+      } catch (err) {
+        console.error("Error converting image:", err);
+      }
+    }
+  };
+
   const fetchTaskDetails = async (id) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Please login to edit tasks");
         navigate("/login");
         return;
       }
 
       const res = await axios.get(API_PATHS.TASK.GET_TASK_BY_ID(id), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const task = res.data.data || res.data.task || res.data;
-
-      if (!task || !task.title) {
-        throw new Error("Task data not found in response");
-      }
 
       setTitle(task.title || "");
       setDescription(task.description || "");
@@ -68,12 +107,13 @@ function AddTask() {
         setEndTime(endDateTime.toTimeString().split(" ")[0].substring(0, 5));
       }
 
+      // If editing, show existing image
       if (task.picture) {
-        setExistingImage(task.picture);
+        setImagePreview(task.picture);
       }
     } catch (error) {
       console.error("Fetch task error:", error);
-      alert(error.response?.data?.message || "Failed to fetch task details");
+      alert("Failed to fetch task details");
       navigate("/dashboard/mytasks");
     }
   };
@@ -84,69 +124,51 @@ function AddTask() {
 
     try {
       const token = localStorage.getItem("token");
-
       if (!token) {
-        alert("Please login to create/edit a task");
         navigate("/login");
         return;
       }
 
-      // Format dates to ISO string
       const start_time = `${startDate}T${startTime}:00`;
       const end_time = endDate && endTime ? `${endDate}T${endTime}:00` : null;
 
-      // Create FormData instead of regular object
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("location", location);
-      formData.append("start_time", start_time);
-      formData.append("end_time", end_time);
-      formData.append("category", category);
+      // Create JSON Object
+      const taskData = {
+        title,
+        description,
+        location,
+        start_time,
+        end_time,
+        category,
+        picture: imagePreview, // Send the Base64 string
+        status: isEditMode ? undefined : "open",
+      };
 
-      // Only add picture if a new one is selected
-      if (taskImage) {
-        formData.append("picture", taskImage);
-      }
-
-      // Only include status for new tasks
-      if (!isEditMode) {
-        formData.append("status", "open");
-      }
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
 
       let res;
       if (isEditMode) {
-        // Update existing task
-        res = await axios.put(API_PATHS.TASK.UPDATE_TASK(taskId), formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            // Don't set Content-Type header - browser will set it automatically
-            // "Content-Type": "multipart/form-data" is set automatically by axios
-          },
-        });
+        res = await axios.put(API_PATHS.TASK.UPDATE_TASK(taskId), taskData, config);
       } else {
-        // Create new task
-        res = await axios.post(API_PATHS.TASK.CREATE_TASK, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            // Don't set Content-Type header - browser will set it automatically
-          },
-        });
+        res = await axios.post(API_PATHS.TASK.CREATE_TASK, taskData, config);
       }
 
       if (res.data.success) {
-        alert(
-          isEditMode
-            ? "Task updated successfully!"
-            : "Task created successfully!"
-        );
+        alert(isEditMode ? "Task updated!" : "Task created!");
         navigate("/dashboard/mytasks");
       }
     } catch (error) {
       console.error("Task operation error:", error);
-      alert(
-        error.response?.data?.message || error.message || "Something went wrong"
-      );
+      if (error.response && error.response.status === 413) {
+        alert("The image is still too large for the server. Try a smaller one.");
+      } else {
+        alert(error.response?.data?.message || "Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -173,7 +195,7 @@ function AddTask() {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Describe the task in detail"
+            placeholder="Describe the task"
             rows="4"
             required
           />
@@ -201,7 +223,6 @@ function AddTask() {
               required
             />
           </div>
-
           <div className="form-group">
             <label>Start Time *</label>
             <input
@@ -220,10 +241,9 @@ function AddTask() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              min={startDate || new Date().toISOString().split("T")[0]}
+              min={startDate}
             />
           </div>
-
           <div className="form-group">
             <label>End Time (Optional)</label>
             <input
@@ -252,38 +272,20 @@ function AddTask() {
         </div>
 
         <div className="form-group">
-          <label>Task Image (Optional)</label>
+          <label>Task Image (Max 2MB)</label>
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setTaskImage(e.target.files[0])}
+            onChange={handleImageChange}
           />
-          {/* Show existing image if in edit mode and no new image selected */}
-          {existingImage && !taskImage && (
+          {imagePreview && (
             <div className="image-preview">
-              <p>Current image:</p>
+              <p>Preview:</p>
               <img
-                src={existingImage}
-                alt="Current task"
-                style={{
-                  maxWidth: "200px",
-                  maxHeight: "200px",
-                  marginTop: "10px",
-                  borderRadius: "8px",
-                }}
-              />
-            </div>
-          )}
-          {/* Show new image preview */}
-          {taskImage && (
-            <div className="image-preview">
-              <p>New image:</p>
-              <img
-                src={URL.createObjectURL(taskImage)}
+                src={imagePreview}
                 alt="Preview"
                 style={{
                   maxWidth: "200px",
-                  maxHeight: "200px",
                   marginTop: "10px",
                   borderRadius: "8px",
                 }}
@@ -293,13 +295,7 @@ function AddTask() {
         </div>
 
         <button type="submit" className="submit-task-button" disabled={loading}>
-          {loading
-            ? isEditMode
-              ? "Updating Task..."
-              : "Creating Task..."
-            : isEditMode
-            ? "Update Task"
-            : "Create Task"}
+          {loading ? "Saving..." : isEditMode ? "Update Task" : "Create Task"}
         </button>
       </form>
     </div>

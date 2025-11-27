@@ -171,15 +171,18 @@ exports.resendOTP = async (req, res) => {
 // Login User
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-
+  console.log("📩 Incoming Login Request:", { email, password });
   if (!email || !password) {
+    console.log("❌ Missing fields:", { email, password });
     return res.status(400).json({ message: "Please fill all fields" });
   }
 
   try {
     const user = await User.findOne({ email });
+    console.log("🔍 Searching user by email...");
 
     if (!user || !(await user.comparePassword(password))) {
+       console.log("❌ No user found with email:", email);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 

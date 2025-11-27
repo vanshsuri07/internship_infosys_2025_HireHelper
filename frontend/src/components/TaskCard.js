@@ -23,6 +23,7 @@ function TaskCard({
 
   const navigate = useNavigate();
   const { user } = useAuth();
+
   const formatDate = (isoString) => {
     if (!isoString) return "Not set";
     const date = new Date(isoString);
@@ -43,10 +44,10 @@ function TaskCard({
 
   const getStatusColor = (status) => {
     const colors = {
-      open: "#10B981", // Green
-      "in-progress": "#F59E0B", // Orange
-      completed: "#3B82F6", // Blue
-      cancelled: "#EF4444", // Red
+      open: " #e91594", 
+      "in-progress": "#d63384", 
+      completed: "#4a0f60", 
+      cancelled: "#EF4444", 
     };
     return colors[status] || "#9CA3AF";
   };
@@ -54,6 +55,20 @@ function TaskCard({
   const handleImageError = (e) => {
     e.target.src = PLACEHOLDER_IMAGE;
   };
+
+  const getImageUrl = (picture) => {
+    if (!picture || picture.trim() === "") return PLACEHOLDER_IMAGE;
+    
+    // Since we are sending Base64 now, it will start with "data:"
+    if (picture.startsWith("data:") || picture.startsWith("http")) {
+      return picture;
+    }
+
+    // Fallback for old images
+    return `http://localhost:5000/${picture}`;
+  };
+
+  const imageUrl = getImageUrl(task.picture);
 
   const handleStatusChange = async (newStatus) => {
     if (newStatus === currentStatus) return;
@@ -114,7 +129,6 @@ function TaskCard({
   const handleRequest = async () => {
     if (onRequest) {
       const success = await onRequest(task);
-      // If the request was successful, update the local state
       if (success !== false) {
         setRequestSent(true);
       }
@@ -122,11 +136,6 @@ function TaskCard({
       navigate(`/dashboard/tasks/${task._id}`);
     }
   };
-
-  const imageUrl =
-    task.picture && task.picture.trim() !== ""
-      ? task.picture
-      : PLACEHOLDER_IMAGE;
 
   return (
     <div className="my-task-card">
@@ -138,7 +147,6 @@ function TaskCard({
           onError={handleImageError}
         />
 
-        {/* Status Badge */}
         <span
           className="task-card-status-badge"
           style={{ backgroundColor: getStatusColor(currentStatus) }}
@@ -146,7 +154,6 @@ function TaskCard({
           {currentStatus.replace("-", " ")}
         </span>
 
-        {/* Category Badge - Moved INSIDE image to save vertical space */}
         {task.category && (
           <span className="task-card-category-badge">{task.category}</span>
         )}
@@ -186,7 +193,6 @@ function TaskCard({
           </div>
         </div>
 
-        {/* Actions pushed to bottom */}
         {isOwner && (
           <div className="task-status-control">
             <select
