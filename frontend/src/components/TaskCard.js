@@ -233,7 +233,7 @@ function TaskCard({
         {showActions && (
           <div className="task-card-actions">
             {isOwner ? (
-              // 🔥 OWNER SEES EDIT + DELETE
+              //  OWNER SEES EDIT + DELETE
               <>
                 <button className="edit-button" onClick={handleEdit}>
                   Edit
@@ -247,7 +247,7 @@ function TaskCard({
                 </button>
               </>
             ) : (
-              // 🔥 NORMAL USER SEES REQUEST BUTTON
+              //  NORMAL USER SEES REQUEST BUTTON
               onRequest && (
                 <button
                   className={

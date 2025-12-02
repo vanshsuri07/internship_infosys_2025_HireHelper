@@ -79,7 +79,7 @@ function Header({ title, subtitle, onSearch }) {
           <FaSearch className="search-icon" />
           <input
             type="text"
-            placeholder="Search Tasks..."
+            placeholder="Search..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />

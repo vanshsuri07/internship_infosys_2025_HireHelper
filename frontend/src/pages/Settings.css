@@ -104,7 +104,7 @@
 }
 
 .change-photo-btn {
-  background: #007bff;
+  background: #e91695;
   color: white;
   padding: 10px 20px;
   border-radius: 6px;
@@ -117,7 +117,7 @@
 }
 
 .change-photo-btn:hover {
-  background: #0056b3;
+  background: #e91695;
 }
 
 .remove-photo-btn {
@@ -183,7 +183,7 @@
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #e91695;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
@@ -206,7 +206,7 @@
 
 /* Buttons */
 .save-btn {
-  background: #28a745;
+  background: #e91695;
   color: white;
   padding: 12px 32px;
   border: none;
@@ -268,7 +268,7 @@
 }
 
 .change-password-btn {
-  background: #007bff;
+  background: #611a7b;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -279,7 +279,7 @@
 }
 
 .change-password-btn:hover {
-  background: #0056b3;
+  background: #611a7b;
 }
 
 /* Modal */

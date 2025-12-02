@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom"; // 1. Import useOutletContext
 import { API_PATHS } from "../api/apipath";
 import TaskCard from "../components/TaskCard";
 import "./MyTasks.css";
@@ -14,6 +14,19 @@ function MyTasks() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const navigate = useNavigate();
+
+  // 2. Get Search Term
+  const context = useOutletContext();
+  const search = context ? context.search : "";
+
+  // 3. Filter Logic
+  // Note: This filters the *current page* of tasks
+  const filteredTasks = tasks.filter((task) => {
+    const term = search.toLowerCase();
+    const title = task.title ? task.title.toLowerCase() : "";
+    const location = task.location ? task.location.toLowerCase() : "";
+    return title.includes(term) || location.includes(term);
+  });
 
   const fetchMyTasks = async (page = 1, status = "") => {
     try {
@@ -103,11 +116,7 @@ function MyTasks() {
 
   return (
     <div className="my-tasks-container">
-      
-      {/* --- TOOLBAR: Dropdown (Left) + Add Button (Right) --- */}
       <div className="tasks-toolbar">
-        
-        {/* THE DROPDOWN MENU */}
         <select 
           className="filter-dropdown"
           value={statusFilter}
@@ -119,7 +128,6 @@ function MyTasks() {
           <option value="completed">Completed</option>
         </select>
 
-        {/* THE ADD TASK BUTTON (Pink) */}
         <button
           className="add-task-button"
           onClick={() => navigate("/dashboard/addtask")}
@@ -129,8 +137,8 @@ function MyTasks() {
       </div>
 
       <div className="my-tasks-list">
-        {tasks.length > 0 ? (
-          tasks.map((task) => (
+        {filteredTasks.length > 0 ? (
+          filteredTasks.map((task) => (
             <TaskCard
               key={task._id}
               task={task}
@@ -141,16 +149,18 @@ function MyTasks() {
         ) : (
           <div className="no-tasks">
             <p>
-              {statusFilter
-                ? `No ${statusFilter} tasks found.`
+              {search 
+                ? "No tasks match your search." 
                 : "You haven't created any tasks yet."}
             </p>
-            <button
-              className="create-first-task-btn"
-              onClick={() => navigate("/dashboard/addtask")}
-            >
-              + Create Your First Task
-            </button>
+            {!search && (
+              <button
+                className="create-first-task-btn"
+                onClick={() => navigate("/dashboard/addtask")}
+              >
+                + Create Your First Task
+              </button>
+            )}
           </div>
         )}
       </div>
