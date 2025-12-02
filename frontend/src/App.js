@@ -1,3 +1,4 @@
+import React from 'react'; // Don't forget React import
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Auth Components
@@ -19,27 +20,29 @@ import MyRequests from "./pages/MyRequests";
 import AddTask from "./pages/AddTask";
 import Settings from "./pages/Settings";
 
+// Landing Page
+import LandingPage from './pages/LandingPage';
+
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        {/* --- Authentication Routes --- */}
-        <Route path="/verify-email" element={<VerifyEmail />} />
+        {/* --- Public Routes --- */}
+        
+        {/* FIX: Set LandingPage as the default "/" route */}
+        <Route path="/" element={<LandingPage />} />
+        
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-
+        
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
-        {/* Set signup as the default page */}
-        <Route path="/" element={<Navigate to="/signup" replace />} />
-
-        {/* --- Dashboard Routes --- */}
-        {/* This is a Nested Route. DashboardLayout is the parent. */}
+        {/* --- Dashboard Routes (Protected) --- */}
         <Route path="/dashboard" element={<DashboardLayout />}>
-          {/* The pages below will render inside the <Outlet /> */}
           <Route path="feed" element={<Feed />} />
           <Route path="mytasks" element={<MyTasks />} />
           <Route path="requests" element={<Requests />} />
@@ -48,7 +51,7 @@ function App() {
           <Route path="addtask/:taskId" element={<AddTask />} />
           <Route path="settings" element={<Settings />} />
 
-          {/* This makes /dashboard/feed the default page */}
+          {/* Default dashboard view */}
           <Route index element={<Navigate to="feed" replace />} />
         </Route>
       </Routes>

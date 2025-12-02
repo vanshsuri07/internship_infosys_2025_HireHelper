@@ -32,12 +32,12 @@
 
 .filter-dropdown:focus,
 .filter-dropdown:hover {
-  border-color: #e11d74; /* Highlight with theme pink */
+  border-color: #e91695; /* Highlight with theme pink */
 }
 
 /* --- ADD TASK BUTTON (Restored Pink Style) --- */
 .add-task-button {
-  background-color: #e11d74; /* Theme Pink */
+  background-color: #e91695; /* Theme Pink */
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -49,7 +49,7 @@
 }
 
 .add-task-button:hover {
-  background-color: #c21562; /* Darker Pink */
+  background-color: #e91695; /* Darker Pink */
 }
 
 /* --- GRID LAYOUT --- */

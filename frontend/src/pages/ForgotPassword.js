@@ -60,7 +60,7 @@ function ForgotPassword() {
             {error && <p className="pr-message error">{error}</p>}
 
             <div className="pr-input-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email"><br></br>Email</label>
               <input
                 type="email"
                 id="email"
@@ -76,7 +76,7 @@ function ForgotPassword() {
             </button>
 
             <p className="pr-help-link">
-              I am not receiving password reset email.{" "}
+              <br></br>I am not receiving password reset email.{" "}
               <Link to="/help">Need help?</Link>
             </p>
           </form>

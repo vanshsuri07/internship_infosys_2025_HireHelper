@@ -3,9 +3,8 @@ import axios from "axios";
 import "./MyRequests.css";
 import { API_PATHS } from "../api/apipath";
 import { FaClock, FaMapMarkerAlt } from "react-icons/fa";
-
-// 1. Define a placeholder image
-// const PLACEHOLDER_IMAGE = "https://via.placeholder.com/600x350.png?text=No+Image";
+// 1. Import Context
+import { useOutletContext } from "react-router-dom";
 
 function MyRequests() {
   const [sent, setSent] = useState([]);
@@ -13,18 +12,34 @@ function MyRequests() {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
 
+  // 2. Get Search Term
+  const context = useOutletContext();
+  const search = context ? context.search : "";
+
+  // 3. Filter Logic (Search by Task Title)
+  const filteredSent = sent.filter((req) => {
+    const term = search.toLowerCase();
+    const taskTitle = req.task?.title?.toLowerCase() || "";
+    return taskTitle.includes(term);
+  });
+
   const fetchSentRequests = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(API_PATHS.REQUESTS.GET_SENT_REQUESTS, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.data?.success || !Array.isArray(res.data.requests)) {
-        return setError("Unexpected API response format.");
+      const res = await axios.get(
+        `${API_PATHS.REQUESTS.GET_SENT_REQUESTS}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      let requestsData = [];
+      if (Array.isArray(res.data)) {
+        requestsData = res.data;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        requestsData = res.data.data;
+      } else if (res.data && Array.isArray(res.data.requests)) {
+        requestsData = res.data.requests;
       }
-
-      setSent(res.data.requests); // <-- Final correct source
+      setSent(requestsData);
     } catch (err) {
       console.error("Error fetching sent requests:", err);
       setError("Failed to load your sent requests.");
@@ -37,7 +52,6 @@ function MyRequests() {
     fetchSentRequests();
   }, []);
 
-  // 2. Helper to format dates
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -49,72 +63,43 @@ function MyRequests() {
     });
   };
 
-  // 3. NEW: Smart Image URL Helper (Matches TaskCard logic)
   const getImageUrl = (picture) => {
-    if (!picture || picture.trim() === "") return null; // Return null to hide image container
-
-    // If it's Base64 or a full URL, return as-is
+    if (!picture || picture.trim() === "") return null;
     if (picture.startsWith("data:") || picture.startsWith("http")) {
       return picture;
     }
-
-    // If it's a relative path (Windows or Mac), fix slashes and prepend localhost
     const cleanPath = picture.replace(/\\/g, "/");
     const path = cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`;
     return `http://localhost:5000${path}`;
   };
 
-  if (loading)
-    return (
-      <div className="my-requests-container">
-        <p className="loading">Loading...</p>
-      </div>
-    );
-  if (error)
-    return (
-      <div className="my-requests-container">
-        <p className="error-message">{error}</p>
-      </div>
-    );
+  if (loading) return <div className="my-requests-container"><p className="loading">Loading...</p></div>;
+  if (error) return <div className="my-requests-container"><p className="error-message">{error}</p></div>;
 
   return (
     <div className="my-requests-container">
       <div className="sent-list">
-        {sent.length === 0 ? (
-          <p className="no-data">You haven't sent any requests yet.</p>
+        {/* 4. Use 'filteredSent' instead of 'sent' */}
+        {filteredSent.length === 0 ? (
+          <p className="no-data">
+            {search ? "No matches found." : "You haven't sent any requests yet."}
+          </p>
         ) : (
-          sent.map((req) => {
+          filteredSent.map((req) => {
             const taskTitle = req.task?.title || "Unknown Task";
-            const taskCategory = req.task?.category || "Other";
+            const taskCategory = req.task?.category || "General";
             const ownerName = req.task?.user
               ? `${req.task.user.firstName} ${req.task.user.lastName}`
               : "Unknown User";
-
-            // 4. Use the helper function here
+            
             const taskImageSrc = getImageUrl(req.task?.picture);
-
-            const ownerInitial = ownerName
-              .split(" ")
-              .map((w) => w[0])
-              .join("")
-              .substring(0, 2)
-              .toUpperCase();
+            const ownerInitial = ownerName.charAt(0).toUpperCase();
 
             return (
               <div key={req._id} className="sent-card">
                 <div className="card-header">
                   <div className="user-info">
-                    <div className="avatar-circle">
-                      {req.task?.user?.profileImageUrl ? (
-                        <img
-                          src={req.task.user.profileImageUrl}
-                          alt={ownerName}
-                          className="req-avatar-image"
-                        />
-                      ) : (
-                        <div className="avatar-circle">{ownerInitial}</div>
-                      )}
-                    </div>
+                    <div className="avatar-circle">{ownerInitial}</div>
                     <div>
                       <div className="title-row">
                         <h3 className="task-title">{taskTitle}</h3>
@@ -128,7 +113,7 @@ function MyRequests() {
                   </span>
                 </div>
 
-                <div className="request-card">
+                <div className="message-box">
                   <strong>Your message:</strong>
                   <p>{req.message}</p>
                 </div>
@@ -144,7 +129,6 @@ function MyRequests() {
                   )}
                 </div>
 
-                {/* 5. Render Image only if valid */}
                 {taskImageSrc && (
                   <div className="task-image-container">
                     <img
@@ -152,7 +136,7 @@ function MyRequests() {
                       alt={taskTitle}
                       className="task-image"
                       onError={(e) => {
-                        e.target.style.display = "none"; // Hide if broken
+                        e.target.style.display = 'none';
                       }}
                     />
                   </div>

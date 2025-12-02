@@ -175,7 +175,7 @@ function ResetPassword() {
               <a
                 href="/forgot-password"
                 style={{
-                  color: "#4CAF50",
+                  color: "#e91695",
                   textDecoration: "none",
                   marginRight: "15px",
                 }}
@@ -184,7 +184,7 @@ function ResetPassword() {
               </a>
               <a
                 href="/login"
-                style={{ color: "#4CAF50", textDecoration: "none" }}
+                style={{ color: "#e91695", textDecoration: "none" }}
               >
                 Back to Login
               </a>
