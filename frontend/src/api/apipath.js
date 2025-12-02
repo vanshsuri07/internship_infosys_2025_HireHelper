@@ -7,6 +7,7 @@ export const API_PATHS = {
     VERIFY_EMAIL: `${BASE_URL}/api/users/verify-email`,
     FORGOT_PASSWORD: `${BASE_URL}/api/users/forgot-password`,
     RESET_PASSWORD: `${BASE_URL}/api/users/reset-password`,
+    UPDATE_PROFILE: `${BASE_URL}/api/users/update-profile`,
   },
   USER: {
     GET_USER_INFO: `${BASE_URL}/api/users/getUser`,

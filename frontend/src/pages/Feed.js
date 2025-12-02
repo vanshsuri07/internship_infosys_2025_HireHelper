@@ -3,9 +3,10 @@ import axios from "axios";
 import TaskCard from "../components/TaskCard";
 import "./Feed.css";
 import { API_PATHS } from "../api/apipath";
-import { FaClipboardList } from "react-icons/fa"; // Added for icons
+import { FaClipboardList } from "react-icons/fa";
 import RequestModal from "../components/RequestModal";
 import { useOutletContext } from "react-router-dom";
+
 function FeedPage() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,13 +17,12 @@ function FeedPage() {
   const filtered = tasks.filter((t) =>
     t.title.toLowerCase().includes(search.toLowerCase())
   );
+
   // Fetch all tasks
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem("token");
-        // Added a tiny artificial delay to show off the skeleton loader smoothly
-        // Remove the setTimeout in production if you want instant data
         const res = await axios.get(`${API_PATHS.TASK.GET_ALL_TASKS}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -36,6 +36,7 @@ function FeedPage() {
 
     fetchTasks();
   }, []);
+
   const openRequestModal = (taskId) => {
     setActiveTask(taskId);
     setShowModal(true);
@@ -53,11 +54,42 @@ function FeedPage() {
 
       alert("Request sent!");
       setShowModal(false);
-      return true; // Return true on success
+
+      // Update the task in the tasks array to mark requestSent as true
+      setTasks(
+        tasks.map((task) =>
+          task._id === activeTask ? { ...task, requestSent: true } : task
+        )
+      );
+
+      return true;
     } catch (err) {
-      alert(err.response?.data?.message || "Error sending request");
-      return false; // Return false on error
+      const errorMessage =
+        err.response?.data?.message || "Error sending request";
+
+      // Check if the error is because request was already sent
+      if (
+        errorMessage.toLowerCase().includes("already sent") ||
+        errorMessage.toLowerCase().includes("already exists")
+      ) {
+        // Update the state to reflect that request was already sent
+        setTasks(
+          tasks.map((task) =>
+            task._id === activeTask ? { ...task, requestSent: true } : task
+          )
+        );
+        setShowModal(false);
+        alert(errorMessage);
+        return true; // Return true because the request exists
+      }
+
+      alert(errorMessage);
+      return false;
     }
+  };
+
+  const handleRequestClick = async (task) => {
+    openRequestModal(task._id);
   };
 
   // --- SKELETON LOADER COMPONENT (Internal) ---
@@ -79,7 +111,6 @@ function FeedPage() {
 
   return (
     <div className="feed-container">
-
       <div className="feed-grid">
         {loading ? (
           <SkeletonLoader />
@@ -98,7 +129,7 @@ function FeedPage() {
               key={task._id}
               task={task}
               showActions={true}
-              onRequest={() => openRequestModal(task._id)}
+              onRequest={() => handleRequestClick(task)}
             />
           ))
         )}

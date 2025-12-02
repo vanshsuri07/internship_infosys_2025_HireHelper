@@ -52,7 +52,12 @@ function Requests() {
     });
   };
 
-  if (loading) return <div className="requests-container"><p className="loading">Loading requests...</p></div>;
+  if (loading)
+    return (
+      <div className="requests-container">
+        <p className="loading">Loading requests...</p>
+      </div>
+    );
 
   return (
     <div className="requests-container">
@@ -67,39 +72,42 @@ function Requests() {
         ) : (
           received.map((req) => (
             <div key={req._id} className="req-card">
-              
               {/* --- LEFT: AVATAR --- */}
               <div className="req-avatar-col">
                 <div className="req-avatar-placeholder">
                   {/* Show first letter of name */}
-                  {req.requester?.firstName ? req.requester.firstName[0].toUpperCase() : <FaUser />}
+                  {req.requester?.profileImageUrl ? (
+                    <img
+                      src={req.requester.profileImageUrl}
+                      alt={`${req.requester.firstName} ${req.requester.lastName}`}
+                      className="req-avatar-image"
+                    />
+                  ) : (
+                    <FaUser />
+                  )}
                 </div>
               </div>
 
               {/* --- MIDDLE: CONTENT --- */}
               <div className="req-content-col">
-                
-                {/* Name & Fake Rating */}
                 <div className="req-top-row">
                   <h3 className="req-name">
                     {req.requester?.firstName} {req.requester?.lastName}
                   </h3>
-                  <div className="req-rating-badge">
-                    <FaStar className="star-icon" />
-                    <span className="rating-num">4.8</span> {/* Placeholder Rating */}
-                    <span className="review-count">(12 reviews)</span>
-                  </div>
                 </div>
 
                 {/* Message */}
                 <p className="req-message">
-                  {req.message || "I'd love to help with this task! Available immediately."}
+                  {req.message ||
+                    "I'd love to help with this task! Available immediately."}
                 </p>
 
                 {/* Grey Task Box */}
                 <div className="req-task-box">
                   <span className="req-task-label">Requesting for:</span>
-                  <span className="req-task-title">{req.task?.title || "Unknown Task"}</span>
+                  <span className="req-task-title">
+                    {req.task?.title || "Unknown Task"}
+                  </span>
                 </div>
 
                 {/* Meta Info */}
@@ -107,34 +115,32 @@ function Requests() {
                   <div className="req-meta-item">
                     <FaClock /> <span>{formatTime(req.createdAt)}</span>
                   </div>
-                  <div className="req-meta-item">
-                    <FaMapMarkerAlt /> <span>Within 5 miles</span> {/* Placeholder Distance */}
-                  </div>
                 </div>
               </div>
 
               {/* --- RIGHT: BUTTONS --- */}
               <div className="req-actions-col">
-                {req.status === 'pending' ? (
+                {req.status === "pending" ? (
                   <>
-                    <button 
-                      className="req-btn accept-btn" 
+                    <button
+                      className="req-btn accept-btn"
                       onClick={() => updateStatus(req._id, "accepted")}
                     >
                       Accept
                     </button>
-                    <button 
-                      className="req-btn decline-btn" 
+                    <button
+                      className="req-btn decline-btn"
                       onClick={() => updateStatus(req._id, "rejected")}
                     >
                       Decline
                     </button>
                   </>
                 ) : (
-                  <span className={`status-label ${req.status}`}>{req.status}</span>
+                  <span className={`status-label ${req.status}`}>
+                    {req.status}
+                  </span>
                 )}
               </div>
-
             </div>
           ))
         )}

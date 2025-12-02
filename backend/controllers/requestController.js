@@ -7,14 +7,13 @@ const Notification = require("../models/Notification");
 exports.sendRequest = async (req, res) => {
   try {
     const { taskId, message } = req.body;
-    const task = await Task.findById(taskId);
 
-    if (!message) {
+    if (!message)
       return res
         .status(400)
         .json({ success: false, message: "Message is required" });
-    }
 
+    const task = await Task.findById(taskId);
     if (!task)
       return res
         .status(404)
@@ -22,9 +21,8 @@ exports.sendRequest = async (req, res) => {
     if (task.user.toString() === req.user._id.toString())
       return res
         .status(400)
-        .json({ success: false, message: "Cannot request your own task" });
+        .json({ success: false, message: "You cannot request your own task" });
 
-    // Check duplicate
     const existing = await Request.findOne({
       task: taskId,
       requester: req.user._id,
@@ -40,12 +38,6 @@ exports.sendRequest = async (req, res) => {
       message,
     });
 
-    // Create notification for task owner
-    await Notification.create({
-      user: task.user,
-      body: `New request for your task: ${task.title}`,
-    });
-
     res.status(201).json({ success: true, request });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -58,17 +50,19 @@ exports.getReceivedRequests = async (req, res) => {
     const requests = await Request.find()
       .populate({
         path: "task",
-        match: { user: req.user._id },
+        match: { user: req.user._id }, // filter right here
+        select: "title description picture location start_time end_time user",
+        populate: {
+          path: "user",
+          select: "firstName lastName email profileImageUrl",
+        },
       })
-      .populate("requester", "email firstName lastName");
+      .populate("requester", "firstName lastName email profileImageUrl");
 
     const filtered = requests.filter((r) => r.task !== null);
 
-    console.log("🟦 Filtered received requests:", filtered.length);
-
     res.json({ success: true, requests: filtered });
   } catch (error) {
-    console.log("❌ ERROR:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -79,15 +73,18 @@ exports.getSentRequests = async (req, res) => {
     const requests = await Request.find({ requester: req.user._id })
       .populate({
         path: "task",
-        select: "title location status start_time end_time picture description",
+        select:
+          "title category description picture location start_time end_time status user",
+
         populate: {
           path: "user",
-          select: "firstName lastName email profilePicture",
+          select: "firstName lastName profileImageUrl email",
         },
       })
+      .populate("requester", "firstName lastName email profileImageUrl")
       .sort({ createdAt: -1 });
 
-    res.json({ success: true, requests });
+    res.status(200).json({ success: true, requests });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

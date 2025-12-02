@@ -1,9 +1,14 @@
 /* This rule creates the 2-column "half-and-half" layout */
+* {
+  box-sizing: border-box;
+}
+
 .signup-container {
   display: flex;
   width: 100vw;
   height: 100vh;
   font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 /* --- Left "Welcome" Side --- */
@@ -185,4 +190,153 @@
 
 .back-icon {
   font-size: 1.2rem;
+}
+
+/* ============================================================
+   TABLET RESPONSIVENESS
+============================================================ */
+@media (max-width: 1024px) {
+  .welcome-content h2 {
+    font-size: 2.5rem;
+  }
+
+  .form-side h2 {
+    font-size: 2rem;
+  }
+
+  .welcome-overlay {
+    padding: 30px;
+  }
+
+  .form-side {
+    padding: 30px;
+  }
+}
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+============================================================ */
+@media (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Hide welcome side on mobile, show form only */
+  .welcome-side {
+    display: none;
+  }
+
+  .form-side {
+    flex: 1;
+    padding: 20px;
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .back-link {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .form-side h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  .form-side form {
+    max-width: 100%;
+  }
+
+  /* Stack form inputs vertically on mobile */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-group input {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .signup-button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+}
+
+/* ============================================================
+   SMALL MOBILE DEVICES
+============================================================ */
+@media (max-width: 480px) {
+  .form-side {
+    padding: 15px;
+    padding-top: 30px;
+  }
+
+  .back-link {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+  }
+
+  .back-icon {
+    font-size: 1rem;
+  }
+
+  .form-side h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .input-group input {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .signup-button {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+/* ============================================================
+   LANDSCAPE MOBILE (OPTIONAL)
+============================================================ */
+@media (max-width: 768px) and (orientation: landscape) {
+  .signup-container {
+    height: auto;
+  }
+
+  .form-side {
+    min-height: auto;
+    padding: 20px;
+    padding-top: 20px;
+  }
+
+  .form-side h2 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
 }

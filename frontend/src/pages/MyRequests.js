@@ -5,7 +5,7 @@ import { API_PATHS } from "../api/apipath";
 import { FaClock, FaMapMarkerAlt } from "react-icons/fa";
 
 // 1. Define a placeholder image
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/600x350.png?text=No+Image";
+// const PLACEHOLDER_IMAGE = "https://via.placeholder.com/600x350.png?text=No+Image";
 
 function MyRequests() {
   const [sent, setSent] = useState([]);
@@ -16,20 +16,15 @@ function MyRequests() {
   const fetchSentRequests = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `${API_PATHS.REQUESTS.GET_SENT_REQUESTS}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      let requestsData = [];
-      if (Array.isArray(res.data)) {
-        requestsData = res.data;
-      } else if (res.data && Array.isArray(res.data.data)) {
-        requestsData = res.data.data;
-      } else if (res.data && Array.isArray(res.data.requests)) {
-        requestsData = res.data.requests;
+      const res = await axios.get(API_PATHS.REQUESTS.GET_SENT_REQUESTS, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.data?.success || !Array.isArray(res.data.requests)) {
+        return setError("Unexpected API response format.");
       }
-      setSent(requestsData);
+
+      setSent(res.data.requests); // <-- Final correct source
     } catch (err) {
       console.error("Error fetching sent requests:", err);
       setError("Failed to load your sent requests.");
@@ -57,7 +52,7 @@ function MyRequests() {
   // 3. NEW: Smart Image URL Helper (Matches TaskCard logic)
   const getImageUrl = (picture) => {
     if (!picture || picture.trim() === "") return null; // Return null to hide image container
-    
+
     // If it's Base64 or a full URL, return as-is
     if (picture.startsWith("data:") || picture.startsWith("http")) {
       return picture;
@@ -69,8 +64,18 @@ function MyRequests() {
     return `http://localhost:5000${path}`;
   };
 
-  if (loading) return <div className="my-requests-container"><p className="loading">Loading...</p></div>;
-  if (error) return <div className="my-requests-container"><p className="error-message">{error}</p></div>;
+  if (loading)
+    return (
+      <div className="my-requests-container">
+        <p className="loading">Loading...</p>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="my-requests-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
 
   return (
     <div className="my-requests-container">
@@ -85,21 +90,36 @@ function MyRequests() {
         ) : (
           sent.map((req) => {
             const taskTitle = req.task?.title || "Unknown Task";
-            const taskCategory = req.task?.category || "General";
+            const taskCategory = req.task?.category || "Other";
             const ownerName = req.task?.user
               ? `${req.task.user.firstName} ${req.task.user.lastName}`
               : "Unknown User";
-            
+
             // 4. Use the helper function here
             const taskImageSrc = getImageUrl(req.task?.picture);
-            
-            const ownerInitial = ownerName.charAt(0).toUpperCase();
+
+            const ownerInitial = ownerName
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .substring(0, 2)
+              .toUpperCase();
 
             return (
               <div key={req._id} className="sent-card">
                 <div className="card-header">
                   <div className="user-info">
-                    <div className="avatar-circle">{ownerInitial}</div>
+                    <div className="avatar-circle">
+                      {req.task?.user?.profileImageUrl ? (
+                        <img
+                          src={req.task.user.profileImageUrl}
+                          alt={ownerName}
+                          className="req-avatar-image"
+                        />
+                      ) : (
+                        <div className="avatar-circle">{ownerInitial}</div>
+                      )}
+                    </div>
                     <div>
                       <div className="title-row">
                         <h3 className="task-title">{taskTitle}</h3>
@@ -113,7 +133,7 @@ function MyRequests() {
                   </span>
                 </div>
 
-                <div className="message-box">
+                <div className="request-card">
                   <strong>Your message:</strong>
                   <p>{req.message}</p>
                 </div>
@@ -137,7 +157,7 @@ function MyRequests() {
                       alt={taskTitle}
                       className="task-image"
                       onError={(e) => {
-                        e.target.style.display = 'none'; // Hide if broken
+                        e.target.style.display = "none"; // Hide if broken
                       }}
                     />
                   </div>

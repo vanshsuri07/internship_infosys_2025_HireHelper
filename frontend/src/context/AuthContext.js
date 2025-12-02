@@ -57,8 +57,17 @@ export function AuthProvider({ children }) {
     navigate("/login");
   };
 
+  // UPDATE USER FUNCTION - NEW
+  const updateUser = (updatedUserData) => {
+    const newUserData = { ...user, ...updatedUserData };
+
+    localStorage.setItem("hirehelper_user", JSON.stringify(newUserData));
+    setUser(newUserData);
+  };
+
   const value = {
     user,
+    setUser: updateUser, // Export as setUser for consistency
     isAuthenticated,
     login,
     logout,

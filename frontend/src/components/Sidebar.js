@@ -11,7 +11,6 @@ import {
   FaHistory,
   FaPlus,
   FaCog,
-  FaUserCircle, // <-- New icon
   FaSignOutAlt, // <-- New icon
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext"; // <-- IMPORT useAuth
@@ -94,9 +93,9 @@ function Sidebar() {
         {user && (
           <div className="user-profile">
             {/* Profile Image or Initials */}
-            {user.profileImage ? (
+            {user.profileImageUrl ? (
               <img
-                src={user.profileImage}
+                src={user.profileImageUrl}
                 alt="Profile"
                 className="profile-photo"
               />

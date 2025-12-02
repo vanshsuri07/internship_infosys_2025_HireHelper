@@ -1,6 +1,7 @@
 const Task = require("../models/Task");
 const mongoose = require("mongoose");
-
+const Request = require("../models/Request");
+const Notification = require("../models/Notification");
 //Create Task
 exports.createTask = async (req, res) => {
   try {
@@ -107,7 +108,7 @@ exports.getAllTasks = async (req, res) => {
     const skip = (pageNum - 1) * limitNum;
 
     const tasks = await Task.find(query)
-      .populate("user", "name email")
+      .populate("user", "firstName lastName email")
       .sort(sort)
       .skip(skip)
       .limit(limitNum);
@@ -115,9 +116,32 @@ exports.getAllTasks = async (req, res) => {
     const totalTasks = await Task.countDocuments(query);
     const totalPages = Math.ceil(totalTasks / limitNum);
 
+    // ========== ADD THIS SECTION ==========
+    // Get all requests made by the current user for these tasks
+    const taskIds = tasks.map((task) => task._id);
+    const userRequests = await Request.find({
+      requester: req.user._id,
+      task: { $in: taskIds },
+    });
+
+    // Create a Set of task IDs that the user has already requested
+    const requestedTaskIds = new Set(
+      userRequests.map((r) => r.task.toString())
+    );
+
+    // Add requestSent flag to each task
+    const tasksWithRequestStatus = tasks.map((task) => {
+      const taskObj = task.toObject();
+      return {
+        ...taskObj,
+        requestSent: requestedTaskIds.has(task._id.toString()),
+      };
+    });
+    // ========================================
+
     res.status(200).json({
       success: true,
-      data: tasks,
+      data: tasksWithRequestStatus, // Changed from 'tasks' to 'tasksWithRequestStatus'
       pagination: {
         currentPage: pageNum,
         totalPages,
@@ -204,7 +228,10 @@ exports.getTaskById = async (req, res) => {
       });
     }
 
-    const task = await Task.findById(id).populate("user", "name email");
+    const task = await Task.findById(id).populate(
+      "user",
+      "firstName lastName email"
+    );
 
     if (!task) {
       return res.status(404).json({

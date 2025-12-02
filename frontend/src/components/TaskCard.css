@@ -190,39 +190,7 @@
 .delete-button:hover {
   background: #fee2e2;
 }
-.request-sent-button {
-  background: #28a745 !important; /* green */
-  color: white !important;
-  cursor: not-allowed !important  ;
-}
-.btn-request {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background-color:  #d166a6; /* Theme Pink */
-  color: white;
-  font-weight: bold;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
 
-.btn-request:hover {
-  background-color: #e91594; /* Darker pink on hover */
-}
-
-/* 2. The Grey "Request Sent" Button (Disabled) */
-.request-sent-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background-color: #e0e0e0;
-  color: #555;
-  font-weight: bold;
-  cursor: not-allowed;
-}
 
 /* 3. The Status Badge (Top Right Corner) */
 .task-card-status-badge {
@@ -239,3 +207,44 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   z-index: 2; /* Ensures it sits on top of the image */
 }
+/* Normal request button */
+
+
+.btn-request {
+  background: linear-gradient(135deg, #ff4bad, #e91594);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  transition: 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-request:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 4px 12px rgba(233, 21, 148, 0.4);
+}
+
+/* Already sent */
+.request-sent-button {
+  background: #33c750;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: default !important;
+}
+
+.btn-disabled {
+  background: #bbb !important;
+  color: #f6f6f6 !important;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+  transform: none !important;
+  box-shadow: none !important;
+}
+

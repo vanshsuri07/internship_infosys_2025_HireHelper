@@ -51,6 +51,7 @@
 .input-group {
   margin-bottom: 25px;
   width: 100%;
+  position: relative; /* Add this */
 }
 
 .input-group label {
@@ -62,12 +63,33 @@
 
 .input-group input {
   width: 100%;
-  padding: 15px;
+  padding: 15px 45px 15px 15px; /* add right padding for the eye */
   border: none;
   background-color: #f0f0f0;
   border-radius: 10px;
   font-size: 1rem;
 }
+
+.eye-icon {
+  position: absolute; /* position inside input */
+  top: 65%;
+  right: 12px; /* distance from right */
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.eye-icon:hover {
+  color: #000;
+}
+
 
 /* --- NEW: Forgot Password Style --- */
 .forgot-password {
@@ -96,7 +118,7 @@
 }
 .password-input-wrapper input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #000a01;
 }
 /* --- Welcome Side (RIGHT) --- */
 .welcome-side {

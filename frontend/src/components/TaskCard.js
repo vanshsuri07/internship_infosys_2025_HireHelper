@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_PATHS } from "../api/apipath";
 import "./TaskCard.css";
 import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext";
 
 const PLACEHOLDER_IMAGE =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='200'%3E%3Crect width='700' height='200' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' fill='%23666'%3ENo Image Available%3C/svg%3E";
+  "https://placehold.co/700x200?text=No+Image&font=roboto";
 
 function TaskCard({
   task,
@@ -22,7 +21,11 @@ function TaskCard({
   const [requestSent, setRequestSent] = useState(task.requestSent || false);
 
   const navigate = useNavigate();
-  const { user } = useAuth();
+
+  // Sync requestSent from task prop whenever it changes
+  useEffect(() => {
+    setRequestSent(task.requestSent || false);
+  }, [task.requestSent]);
 
   const formatDate = (isoString) => {
     if (!isoString) return "Not set";
@@ -44,21 +47,28 @@ function TaskCard({
 
   const getStatusColor = (status) => {
     const colors = {
-      open: " #e91594", 
-      "in-progress": "#d63384", 
-      completed: "#4a0f60", 
-      cancelled: "#EF4444", 
+      open: " #e91594",
+      "in-progress": "#d63384",
+      completed: "#4a0f60",
+      cancelled: "#EF4444",
     };
     return colors[status] || "#9CA3AF";
   };
+  const getTaskOwnerName = (request) => {
+    const taskUser = request.task?.user;
+    if (!taskUser) return "Unknown Owner";
 
+    const firstName = taskUser.firstName || "";
+    const lastName = taskUser.lastName || "";
+    return `${firstName} ${lastName}`.trim() || "Unknown Owner";
+  };
   const handleImageError = (e) => {
     e.target.src = PLACEHOLDER_IMAGE;
   };
 
   const getImageUrl = (picture) => {
     if (!picture || picture.trim() === "") return PLACEHOLDER_IMAGE;
-    
+
     // Since we are sending Base64 now, it will start with "data:"
     if (picture.startsWith("data:") || picture.startsWith("http")) {
       return picture;
@@ -128,9 +138,12 @@ function TaskCard({
 
   const handleRequest = async () => {
     if (onRequest) {
-      const success = await onRequest(task);
-      if (success !== false) {
-        setRequestSent(true);
+      try {
+        await onRequest(task);
+        // Don't set requestSent here - let the parent component update the task prop
+        // which will trigger the useEffect above to update requestSent
+      } catch (error) {
+        console.error("Request error:", error);
       }
     } else {
       navigate(`/dashboard/tasks/${task._id}`);
@@ -167,7 +180,14 @@ function TaskCard({
         {task.user && (
           <div className="task-card-user">
             <FaUser />
-            <span>{user ? `${user.firstName} ${user.lastName}` : "User"}</span>
+            <span>
+              {task.user.name ||
+                `${task.user.firstName || ""} ${
+                  task.user.lastName || ""
+                }`.trim() ||
+                task.user.email ||
+                "Task Owner"}
+            </span>
           </div>
         )}
 
@@ -213,6 +233,7 @@ function TaskCard({
         {showActions && (
           <div className="task-card-actions">
             {isOwner ? (
+              // 🔥 OWNER SEES EDIT + DELETE
               <>
                 <button className="edit-button" onClick={handleEdit}>
                   Edit
@@ -222,19 +243,30 @@ function TaskCard({
                   onClick={handleDelete}
                   disabled={isDeleting}
                 >
-                  {isDeleting ? "..." : "Delete"}
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </button>
               </>
             ) : (
+              // 🔥 NORMAL USER SEES REQUEST BUTTON
               onRequest && (
                 <button
                   className={
-                    requestSent ? "request-sent-button" : "btn-request"
+                    requestSent
+                      ? "request-sent-button"
+                      : currentStatus !== "open"
+                      ? "btn-disabled"
+                      : "btn-request"
                   }
                   onClick={handleRequest}
-                  disabled={requestSent}
+                  disabled={requestSent || currentStatus !== "open"}
                 >
-                  {requestSent ? "Request Sent ✓" : "Request to Help"}
+                  {requestSent
+                    ? "Request Sent ✓"
+                    : currentStatus === "completed"
+                    ? "Completed"
+                    : currentStatus === "in-progress"
+                    ? "In Progress"
+                    : "Request to Help"}
                 </button>
               )
             )}

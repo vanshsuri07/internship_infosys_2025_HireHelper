@@ -1,6 +1,6 @@
 const express = require("express");
 const { protect } = require("../middlewares/authMiddleware");
-
+const upload = require("../config/multer");
 const {
   registerUser,
   loginUser,
@@ -10,6 +10,7 @@ const {
   forgotPassword,
   resetPassword,
   verifyResetToken,
+  updateProfile,
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -21,6 +22,12 @@ router.post("/verify-email", verifyEmail);
 router.post("/resend-otp", resendOTP);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
-router.get("/verify-reset-token/:token", verifyResetToken); // Optional
+router.get("/verify-reset-token/:token", verifyResetToken);
+router.patch(
+  "/update-profile",
+  protect,
+  upload.single("profileImage"),
+  updateProfile
+);
 
 module.exports = router;

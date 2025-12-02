@@ -90,6 +90,12 @@
   gap: 4px;
   font-size: 0.85rem;
 }
+.req-avatar-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
 .star-icon { color: #fbbf24; }
 .rating-num { font-weight: 700; color: #111; }
