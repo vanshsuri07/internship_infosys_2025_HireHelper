@@ -79,11 +79,6 @@ function MyRequests() {
 
   return (
     <div className="my-requests-container">
-      <div className="header-section">
-        <h2>My Requests</h2>
-        <p>Track the help requests you've sent</p>
-      </div>
-
       <div className="sent-list">
         {sent.length === 0 ? (
           <p className="no-data">You haven't sent any requests yet.</p>

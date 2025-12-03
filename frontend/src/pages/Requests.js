@@ -61,11 +61,6 @@ function Requests() {
 
   return (
     <div className="requests-container">
-      <div className="req-header-section">
-        <h2>Incoming Requests</h2>
-        <p>People who want to help with your tasks</p>
-      </div>
-
       <div className="req-list">
         {received.length === 0 ? (
           <p className="no-requests">No incoming requests found.</p>

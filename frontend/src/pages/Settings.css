@@ -221,9 +221,9 @@
 }
 
 .save-btn:hover:not(:disabled) {
-  background: #218838;
+  background: #e91695;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 8px #611a7b;
 }
 
 .save-btn:disabled {
