@@ -1,7 +1,8 @@
 const Task = require("../models/Task");
 const mongoose = require("mongoose");
 const Request = require("../models/Request");
-const Notification = require("../models/Notification");
+// const Notification = require("../models/Notification");
+
 //Create Task
 exports.createTask = async (req, res) => {
   try {
@@ -116,7 +117,6 @@ exports.getAllTasks = async (req, res) => {
     const totalTasks = await Task.countDocuments(query);
     const totalPages = Math.ceil(totalTasks / limitNum);
 
-    // ========== ADD THIS SECTION ==========
     // Get all requests made by the current user for these tasks
     const taskIds = tasks.map((task) => task._id);
     const userRequests = await Request.find({
@@ -137,11 +137,10 @@ exports.getAllTasks = async (req, res) => {
         requestSent: requestedTaskIds.has(task._id.toString()),
       };
     });
-    // ========================================
 
     res.status(200).json({
       success: true,
-      data: tasksWithRequestStatus, // Changed from 'tasks' to 'tasksWithRequestStatus'
+      data: tasksWithRequestStatus,
       pagination: {
         currentPage: pageNum,
         totalPages,

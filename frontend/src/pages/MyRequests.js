@@ -5,6 +5,7 @@ import { API_PATHS } from "../api/apipath";
 import { FaClock, FaMapMarkerAlt } from "react-icons/fa";
 // 1. Import Context
 import { useOutletContext } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 
 function MyRequests() {
   const [sent, setSent] = useState([]);
@@ -26,11 +27,8 @@ function MyRequests() {
   const fetchSentRequests = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `${API_PATHS.REQUESTS.GET_SENT_REQUESTS}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
+      const res = await axiosInstance.get(API_PATHS.REQUESTS.GET_SENT_REQUESTS);
+
       let requestsData = [];
       if (Array.isArray(res.data)) {
         requestsData = res.data;
@@ -73,8 +71,18 @@ function MyRequests() {
     return `http://localhost:5000${path}`;
   };
 
-  if (loading) return <div className="my-requests-container"><p className="loading">Loading...</p></div>;
-  if (error) return <div className="my-requests-container"><p className="error-message">{error}</p></div>;
+  if (loading)
+    return (
+      <div className="my-requests-container">
+        <p className="loading">Loading...</p>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="my-requests-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
 
   return (
     <div className="my-requests-container">
@@ -82,7 +90,9 @@ function MyRequests() {
         {/* 4. Use 'filteredSent' instead of 'sent' */}
         {filteredSent.length === 0 ? (
           <p className="no-data">
-            {search ? "No matches found." : "You haven't sent any requests yet."}
+            {search
+              ? "No matches found."
+              : "You haven't sent any requests yet."}
           </p>
         ) : (
           filteredSent.map((req) => {
@@ -91,15 +101,36 @@ function MyRequests() {
             const ownerName = req.task?.user
               ? `${req.task.user.firstName} ${req.task.user.lastName}`
               : "Unknown User";
-            
+
             const taskImageSrc = getImageUrl(req.task?.picture);
-            const ownerInitial = ownerName.charAt(0).toUpperCase();
+            const getInitials = (name) => {
+              if (!name) return "";
+
+              const parts = name.trim().split(" ");
+
+              const first = parts[0]?.[0] || "";
+              const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+
+              return (first + last).toUpperCase();
+            };
+
+            const ownerInitial = getInitials(ownerName);
 
             return (
               <div key={req._id} className="sent-card">
                 <div className="card-header">
                   <div className="user-info">
-                    <div className="avatar-circle">{ownerInitial}</div>
+                    <div className="avatar-circle">
+                      {req.task?.user?.profileImageUrl ? (
+                        <img
+                          src={req.task.user.profileImageUrl}
+                          alt={ownerName}
+                          className="req-avatar-image"
+                        />
+                      ) : (
+                        <div className="avatar-circle">{ownerInitial}</div>
+                      )}
+                    </div>
                     <div>
                       <div className="title-row">
                         <h3 className="task-title">{taskTitle}</h3>
@@ -136,7 +167,7 @@ function MyRequests() {
                       alt={taskTitle}
                       className="task-image"
                       onError={(e) => {
-                        e.target.style.display = 'none';
+                        e.target.style.display = "none";
                       }}
                     />
                   </div>

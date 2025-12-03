@@ -1,4 +1,3 @@
-// controllers/notificationController.js
 const Notification = require("../models/Notification");
 
 exports.markAsRead = async (req, res) => {

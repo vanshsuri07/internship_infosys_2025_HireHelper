@@ -1,9 +1,14 @@
 /* --- Main Container --- */
+* {
+  box-sizing: border-box;
+}
+
 .login-container {
   display: flex;
   width: 100vw;
   height: 100vh;
   font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 /* --- Form Side (LEFT) --- */
@@ -68,6 +73,12 @@
   background-color: #f0f0f0;
   border-radius: 10px;
   font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: 2px solid #e11d74;
+  outline-offset: 2px;
 }
 
 .eye-icon {
@@ -104,6 +115,7 @@
 /* --- Login Button Style --- */
 .login-button {
   width: 35%;
+  min-width: 200px;
   align-self: center;
   padding: 15px;
   border: none;
@@ -114,7 +126,18 @@
   font-weight: bold;
   cursor: pointer;
   margin-top: 20px;
-  align-self: center;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: #c01560;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(225, 29, 116, 0.3);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .password-input-wrapper input:focus {
   outline: none;
@@ -150,17 +173,16 @@
   font-weight: bold;
   display: flex;         
   align-items: center;   
-  
-  /* Override default to align RIGHT */
-  align-self: flex-end; 
+  align-self: flex-end;
+  white-space: nowrap;
 }
 
 .welcome-logo img {
   height: 1.5rem; 
   width: auto;    
-  /* --- Order changed for right-side logo --- */
   margin-left: 10px; 
   border-radius: 5px;
+  flex-shrink: 0;
 }
 
 .welcome-content {
@@ -219,4 +241,206 @@
   margin-bottom: 20px;
   max-width: 500px;
   width: 100%;
+}
+
+/* ============================================================
+   TABLET RESPONSIVENESS
+============================================================ */
+@media (max-width: 1024px) {
+  .welcome-content h2 {
+    font-size: 2.5rem;
+  }
+
+  .form-side h2 {
+    font-size: 2rem;
+  }
+
+  .welcome-overlay {
+    padding: 30px;
+  }
+
+  .form-side {
+    padding: 30px;
+  }
+
+  .back-link {
+    top: 30px;
+    left: 30px;
+  }
+}
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+============================================================ */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Hide welcome side on mobile, show form only */
+  .welcome-side {
+    display: none;
+  }
+
+  .form-side {
+    flex: 1;
+    padding: 20px;
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .back-link {
+    position: static;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    align-self: flex-start;
+  }
+
+  .form-side h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .form-side form {
+    max-width: 100%;
+  }
+
+  /* Stack form inputs vertically on mobile */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-group label {
+    font-size: 0.95rem;
+  }
+
+  .input-group input {
+    padding: 13px 45px 13px 13px;
+    font-size: 0.95rem;
+  }
+
+  .eye-icon {
+    right: 10px;
+    font-size: 1rem;
+  }
+
+  .forgot-password {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .login-button {
+    width: 100%;
+    min-width: unset;
+    padding: 14px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .form-error {
+    padding: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+  }
+}
+
+/* ============================================================
+   SMALL MOBILE DEVICES
+============================================================ */
+@media (max-width: 480px) {
+  .form-side {
+    padding: 15px;
+    padding-top: 30px;
+  }
+
+  .back-link {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  .back-icon {
+    font-size: 1rem;
+  }
+
+  .form-side h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 18px;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .input-group input {
+    padding: 12px 40px 12px 12px;
+    font-size: 0.9rem;
+  }
+
+  .eye-icon {
+    font-size: 0.95rem;
+  }
+
+  .forgot-password {
+    font-size: 0.85rem;
+    margin-top: -8px;
+    margin-bottom: 18px;
+  }
+
+  .login-button {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+
+  .form-error {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================================
+   LANDSCAPE MOBILE (OPTIONAL)
+============================================================ */
+@media (max-width: 768px) and (orientation: landscape) {
+  .login-container {
+    height: auto;
+  }
+
+  .form-side {
+    min-height: auto;
+    padding: 20px;
+    padding-top: 25px;
+  }
+
+  .form-side h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
+
+  .forgot-password {
+    margin-bottom: 15px;
+  }
+
+  .login-button {
+    margin-top: 5px;
+  }
 }

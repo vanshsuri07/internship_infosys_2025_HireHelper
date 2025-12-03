@@ -20,7 +20,7 @@ function ForgotPassword() {
 
     try {
       const { data } = await axiosInstance.post(
-        `${API_PATHS.AUTH.FORGOT_PASSWORD}`,
+        API_PATHS.AUTH.FORGOT_PASSWORD,
         { email }
       );
 
@@ -60,7 +60,9 @@ function ForgotPassword() {
             {error && <p className="pr-message error">{error}</p>}
 
             <div className="pr-input-group">
-              <label htmlFor="email"><br></br>Email</label>
+              <label htmlFor="email">
+                <br></br>Email
+              </label>
               <input
                 type="email"
                 id="email"

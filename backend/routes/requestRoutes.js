@@ -10,9 +10,9 @@ const {
 
 const router = express.Router();
 
-router.post("/", protect, sendRequest); // Send request for a task
-router.get("/received", protect, getReceivedRequests); // Requests for my tasks
-router.get("/sent", protect, getSentRequests); // Requests I sent
-router.patch("/:id", protect, updateRequestStatus); // Accept/reject request
+router.post("/", protect, sendRequest);
+router.get("/received", protect, getReceivedRequests);
+router.get("/sent", protect, getSentRequests);
+router.patch("/:id", protect, updateRequestStatus);
 
 module.exports = router;

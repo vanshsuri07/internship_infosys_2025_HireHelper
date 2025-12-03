@@ -44,7 +44,7 @@ exports.sendRequest = async (req, res) => {
   }
 };
 
-// View all requests received (for your tasks)
+// View all requests received
 exports.getReceivedRequests = async (req, res) => {
   try {
     const requests = await Request.find()
