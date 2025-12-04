@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaSearch, FaBell } from "react-icons/fa";
 import { API_PATHS } from "../api/apipath";
 
-function Header({ title, subtitle, onSearch }) {
+function Header({ title, subtitle, onSearch , showSearch = true}) {
   const [notifications, setNotifications] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -75,15 +75,17 @@ function Header({ title, subtitle, onSearch }) {
 
       <div className="header-controls">
         {/* 🔍 SEARCH BAR */}
-        <div className="header-search">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        </div>
+        {showSearch && (
+          <div className="header-search">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
+        )}
 
         {/* 🔔 Notification Bell */}
         <div

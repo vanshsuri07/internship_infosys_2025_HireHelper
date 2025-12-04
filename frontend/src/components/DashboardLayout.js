@@ -39,6 +39,13 @@ function DashboardLayout() {
   const currentSubtitle =
     pageTitles[location.pathname]?.subtitle || "Welcome to Hire-a-Helper";
 
+  // --- NEW LOGIC: Hide Search on specific pages ---
+  // We use .startsWith for addtask to cover both "New" and "Edit" modes
+  const isSettings = location.pathname === "/dashboard/settings";
+  const isAddTask = location.pathname.startsWith("/dashboard/addtask");
+  
+  const showSearchBar = !isSettings && !isAddTask;
+
   return (
     <div className="dashboard-container">
       <Sidebar />
@@ -49,6 +56,7 @@ function DashboardLayout() {
           title={currentTitle}
           subtitle={currentSubtitle}
           onSearch={setSearch}
+          showSearch={showSearchBar}
         />
 
         <div className="dashboard-content">
