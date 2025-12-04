@@ -6,6 +6,7 @@ import { API_PATHS } from "../api/apipath";
 import { FaClipboardList } from "react-icons/fa";
 import RequestModal from "../components/RequestModal";
 import { useOutletContext } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 
 function FeedPage() {
   const [tasks, setTasks] = useState([]);
@@ -22,10 +23,8 @@ function FeedPage() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_PATHS.TASK.GET_ALL_TASKS}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axiosInstance.get(API_PATHS.TASK.GET_ALL_TASKS);
+
         setTasks(res.data.data || []);
       } catch (err) {
         console.error("Error fetching feed tasks:", err);
@@ -44,13 +43,10 @@ function FeedPage() {
 
   const sendRequest = async (message) => {
     try {
-      const token = localStorage.getItem("token");
-
-      await axios.post(
-        `${API_PATHS.REQUESTS.CREATE_REQUEST}`,
-        { taskId: activeTask, message },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axiosInstance.post(API_PATHS.REQUESTS.CREATE_REQUEST, {
+        taskId: activeTask,
+        message,
+      });
 
       alert("Request sent!");
       setShowModal(false);

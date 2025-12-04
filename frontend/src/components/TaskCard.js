@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { API_PATHS } from "../api/apipath";
 import "./TaskCard.css";
 import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
+import axiosInstance from "../api/axiosInstance";
 
 const PLACEHOLDER_IMAGE =
   "https://placehold.co/700x200?text=No+Image&font=roboto";
@@ -90,15 +91,9 @@ function TaskCard({
         navigate("/login");
         return;
       }
-      const res = await axios.patch(
+      const res = await axiosInstance.patch(
         API_PATHS.TASK.UPDATE_TASK(task._id),
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+        { status: newStatus }
       );
       if (res.data.success) {
         setCurrentStatus(newStatus);
@@ -121,9 +116,9 @@ function TaskCard({
         navigate("/login");
         return;
       }
-      const res = await axios.delete(API_PATHS.TASK.DELETE_TASK(task._id), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axiosInstance.delete(
+        API_PATHS.TASK.DELETE_TASK(task._id)
+      );
       if (res.data.success) {
         if (onDelete) onDelete(task._id);
       }
@@ -225,7 +220,6 @@ function TaskCard({
               <option value="open">Open</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
             </select>
           </div>
         )}

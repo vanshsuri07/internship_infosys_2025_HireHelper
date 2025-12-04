@@ -92,7 +92,7 @@
   gap: 10px;
 }
 
-.profile-initials,
+.profile-init,
 .profile-photo {
   width: 40px;
   height: 40px;
@@ -100,7 +100,7 @@
   object-fit: cover;
 }
 
-.profile-initials {
+.profile-init {
   background: #f0f0f0;
   color: #333;
   font-weight: 600;

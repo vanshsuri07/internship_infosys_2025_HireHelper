@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_PATHS } from "../api/apipath";
 import "./AddTask.css";
+import axiosInstance from "../api/axiosInstance";
 
 function AddTask() {
   const [title, setTitle] = useState("");
@@ -158,18 +159,13 @@ function AddTask() {
       let res;
       if (isEditMode) {
         // Update existing task
-        res = await axios.put(API_PATHS.TASK.UPDATE_TASK(taskId), formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        res = await axiosInstance.patch(
+          API_PATHS.TASK.UPDATE_TASK(taskId),
+          formData
+        );
       } else {
         // Create new task
-        res = await axios.post(API_PATHS.TASK.CREATE_TASK, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        res = await axiosInstance.post(API_PATHS.TASK.CREATE_TASK, formData);
       }
 
       if (res.data.success) {

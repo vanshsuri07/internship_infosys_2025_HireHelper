@@ -1,41 +1,43 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./Requests.css";
 import { API_PATHS } from "../api/apipath";
-import { FaStar, FaClock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
-// 1. Import Context
-import { useOutletContext } from "react-router-dom"; 
+import { FaStar, FaClock, FaMapMarkerAlt } from "react-icons/fa";
+import { useOutletContext } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 
 function Requests() {
   const [received, setReceived] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
 
-  // 2. Get Search Term from Header
   const context = useOutletContext();
   const search = context ? context.search : "";
 
-  // 3. Filter Logic (Search by Name or Task Title)
+  // -------------------------------
+  // Get First + Last Name Initials
+  // -------------------------------
+  const getInitials = (firstName, lastName) => {
+    const f = firstName?.charAt(0)?.toUpperCase() || "";
+    const l = lastName?.charAt(0)?.toUpperCase() || "";
+    return f + l;
+  };
+
+  // -------------------------------
+  // Filter Logic
+  // -------------------------------
   const filteredRequests = received.filter((req) => {
     const term = search.toLowerCase();
-    
-    // Safely get name and title (handle missing data)
-    const firstName = req.requester?.firstName?.toLowerCase() || "";
-    const lastName = req.requester?.lastName?.toLowerCase() || "";
-    const fullName = `${firstName} ${lastName}`;
-    const taskTitle = req.task?.title?.toLowerCase() || "";
+    const first = req.requester?.firstName?.toLowerCase() || "";
+    const last = req.requester?.lastName?.toLowerCase() || "";
+    const fullName = `${first} ${last}`;
+    const title = req.task?.title?.toLowerCase() || "";
 
-    // Check if name OR task title matches search term
-    return fullName.includes(term) || taskTitle.includes(term);
+    return fullName.includes(term) || title.includes(term);
   });
 
   const fetchRequests = async () => {
     try {
-      const resReceived = await axios.get(
-        `${API_PATHS.REQUESTS.GET_MY_REQUESTS}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setReceived(resReceived.data.requests || []);
+      const res = await axiosInstance.get(API_PATHS.REQUESTS.GET_MY_REQUESTS);
+      setReceived(res.data.requests || []);
     } catch (err) {
       console.error("Error fetching requests:", err);
     } finally {
@@ -49,12 +51,11 @@ function Requests() {
 
   const updateStatus = async (reqId, newStatus) => {
     try {
-      await axios.patch(
+      await axiosInstance.patch(
         `${API_PATHS.REQUESTS.UPDATE_REQUEST_STATUS(reqId)}`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { status: newStatus }
       );
-      fetchRequests(); 
+      fetchRequests();
     } catch (err) {
       console.error("Error updating request:", err);
       alert("Failed to update status");
@@ -70,23 +71,40 @@ function Requests() {
     });
   };
 
-  if (loading) return <div className="requests-container"><p className="loading">Loading requests...</p></div>;
+  if (loading)
+    return (
+      <div className="requests-container">
+        <p className="loading">Loading requests...</p>
+      </div>
+    );
 
   return (
     <div className="requests-container">
       <div className="req-list">
-        {/* 4. Use 'filteredRequests' instead of 'received' */}
         {filteredRequests.length === 0 ? (
           <p className="no-requests">
-            {search ? "No matching requests found." : "No incoming requests found."}
+            {search ? "No matching requests found." : "No incoming requests."}
           </p>
         ) : (
           filteredRequests.map((req) => (
             <div key={req._id} className="req-card">
-              
+              {/* ---- Avatar ---- */}
               <div className="req-avatar-col">
                 <div className="req-avatar-placeholder">
-                  {req.requester?.firstName ? req.requester.firstName[0].toUpperCase() : <FaUser />}
+                  {req.requester?.profileImageUrl ? (
+                    <img
+                      src={req.requester.profileImageUrl}
+                      alt="profile"
+                      className="req-avatar-image"
+                    />
+                  ) : (
+                    <span className="avatar-initials">
+                      {getInitials(
+                        req.requester?.firstName,
+                        req.requester?.lastName
+                      )}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -95,6 +113,7 @@ function Requests() {
                   <h3 className="req-name">
                     {req.requester?.firstName} {req.requester?.lastName}
                   </h3>
+
                   <div className="req-rating-badge">
                     <FaStar className="star-icon" />
                     <span className="rating-num">4.8</span>
@@ -108,13 +127,16 @@ function Requests() {
 
                 <div className="req-task-box">
                   <span className="req-task-label">Requesting for:</span>
-                  <span className="req-task-title">{req.task?.title || "Unknown Task"}</span>
+                  <span className="req-task-title">
+                    {req.task?.title || "Unknown Task"}
+                  </span>
                 </div>
 
                 <div className="req-meta-row">
                   <div className="req-meta-item">
                     <FaClock /> <span>{formatTime(req.createdAt)}</span>
                   </div>
+
                   <div className="req-meta-item">
                     <FaMapMarkerAlt /> <span>Within 5 miles</span>
                   </div>
@@ -122,26 +144,28 @@ function Requests() {
               </div>
 
               <div className="req-actions-col">
-                {req.status === 'pending' ? (
+                {req.status === "pending" ? (
                   <>
-                    <button 
-                      className="req-btn accept-btn" 
+                    <button
+                      className="req-btn accept-btn"
                       onClick={() => updateStatus(req._id, "accepted")}
                     >
                       Accept
                     </button>
-                    <button 
-                      className="req-btn decline-btn" 
+
+                    <button
+                      className="req-btn decline-btn"
                       onClick={() => updateStatus(req._id, "rejected")}
                     >
                       Decline
                     </button>
                   </>
                 ) : (
-                  <span className={`status-label ${req.status}`}>{req.status}</span>
+                  <span className={`status-label ${req.status}`}>
+                    {req.status}
+                  </span>
                 )}
               </div>
-
             </div>
           ))
         )}

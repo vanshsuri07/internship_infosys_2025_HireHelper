@@ -3,6 +3,7 @@ import "./Dashboard.css";
 import axios from "axios";
 import { FaSearch, FaBell } from "react-icons/fa";
 import { API_PATHS } from "../api/apipath";
+import axiosInstance from "../api/axiosInstance";
 
 function Header({ title, subtitle, onSearch , showSearch = true}) {
   const [notifications, setNotifications] = useState([]);
@@ -13,10 +14,9 @@ function Header({ title, subtitle, onSearch , showSearch = true}) {
   // Fetch notifications
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(API_PATHS.NOTIFICATION.GET_NOTIFICATIONS, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axiosInstance.get(
+        API_PATHS.NOTIFICATION.GET_NOTIFICATIONS
+      );
       setNotifications(res.data.notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);

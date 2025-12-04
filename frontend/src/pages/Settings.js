@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { FaUserCircle, FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import "./Settings.css";
 import { useAuth } from "../context/AuthContext";
 import { API_PATHS } from "../api/apipath";
 import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 
 // API Configuration
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 function Settings() {
-  // Auth state - replace with your actual auth context
   const { user, setUser } = useAuth();
 
   // Form state
@@ -19,7 +19,7 @@ function Settings() {
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
   const [changes, setChanges] = useState(false);
-
+  const [showImageModal, setShowImageModal] = useState(false);
   // Profile image state
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -73,13 +73,6 @@ function Settings() {
     return localStorage.getItem("token");
   };
 
-  // Fix for AuthContext destructuring - at the top of the component
-  // Replace these two lines:
-  // const { user } = useAuth();
-  // const { setUser } = useAuth();
-  // With this single line:
-  // const { user, setUser } = useAuth();
-
   // Handle profile update
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,15 +92,13 @@ function Settings() {
       formData.append("bio", bio);
 
       if (profileImage) {
-        formData.append("profileImage", profileImage); // MUST MATCH multer.single("profileImage")
+        formData.append("profileImage", profileImage);
       }
 
-      const res = await axios.patch(API_PATHS.AUTH.UPDATE_PROFILE, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axiosInstance.patch(
+        API_PATHS.AUTH.UPDATE_PROFILE,
+        formData
+      );
 
       setUser(res.data.data);
       setSuccess("Profile updated successfully!");
@@ -138,12 +129,10 @@ function Settings() {
       const formData = new FormData();
       formData.append("removeProfileImage", "true");
 
-      const res = await axios.patch(API_PATHS.AUTH.UPDATE_PROFILE, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axiosInstance.patch(
+        API_PATHS.AUTH.UPDATE_PROFILE,
+        formData
+      );
 
       setUser(res.data.data);
       setProfileImage(null);
@@ -164,14 +153,8 @@ function Settings() {
     setSuccess("");
 
     try {
-      const response = await fetch(`${BASE_URL}/api/users/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: user.email,
-        }),
+      const response = await axiosInstance.post("/api/users/forgot-password", {
+        email: user.email,
       });
 
       const data = await response.json();
@@ -211,11 +194,21 @@ function Settings() {
       <div className="settings-section">
         <h3>Profile Picture</h3>
         <div className="profile-pic-area">
-          <div className="avatar-preview">
+          <div
+            className="avatar-preview"
+            onClick={() => imagePreview && setShowImageModal(true)}
+          >
             {imagePreview ? (
-              <img src={imagePreview} alt="Profile" />
+              <img
+                src={imagePreview}
+                alt="Profile"
+                className="clickable-image"
+              />
             ) : (
-              <FaUserCircle className="default-avatar" />
+              <div className="profile-initials">
+                {user?.firstName?.[0]?.toUpperCase() || ""}
+                {user?.lastName?.[0]?.toUpperCase() || ""}
+              </div>
             )}
           </div>
           <div className="pic-actions">
@@ -344,6 +337,22 @@ function Settings() {
           </button>
         </div>
       </div>
+      {showImageModal && (
+        <div
+          className="image-modal-overlay"
+          onClick={() => setShowImageModal(false)}
+        >
+          <div className="image-modal" onClick={(e) => e.stopPropagation()}>
+            <img src={imagePreview} alt="Full View" />
+            <button
+              className="close-modal"
+              onClick={() => setShowImageModal(false)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,16 +1,18 @@
-import React from 'react';
-import './RequestCard.css';
-import { FaStar, FaClock, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
+import React from "react";
+import "./RequestCard.css";
+import { FaStar, FaClock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
 
 function RequestCard({ request, onAccept, onDecline }) {
   const { sender, task, message, createdAt } = request;
 
-  // Helper to format date/time (e.g., "Jul 4, 4:00 PM")
   const formatTime = (dateString) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
     });
   };
 
@@ -19,7 +21,11 @@ function RequestCard({ request, onAccept, onDecline }) {
       {/* --- Left: Avatar --- */}
       <div className="req-avatar-section">
         {sender?.picture ? (
-          <img src={sender.picture} alt={sender.name} className="req-avatar-img" />
+          <img
+            src={sender.picture}
+            alt={sender.name}
+            className="req-avatar-img"
+          />
         ) : (
           <div className="req-avatar-placeholder">
             {sender?.name ? sender.name.charAt(0).toUpperCase() : <FaUser />}
@@ -30,7 +36,7 @@ function RequestCard({ request, onAccept, onDecline }) {
       {/* --- Middle: Content --- */}
       <div className="req-content-section">
         <div className="req-header">
-          <h3 className="req-name">{sender?.name || 'Unknown User'}</h3>
+          <h3 className="req-name">{sender?.name || "Unknown User"}</h3>
           <div className="req-rating">
             <FaStar className="star-icon" />
             <span className="rating-val">4.8</span> {/* Mock rating for now */}
@@ -45,7 +51,9 @@ function RequestCard({ request, onAccept, onDecline }) {
         {/* The "Requesting for" Grey Box */}
         <div className="req-task-box">
           <span className="req-task-label">Requesting for:</span>
-          <span className="req-task-title">{task?.title || 'Unknown Task'}</span>
+          <span className="req-task-title">
+            {task?.title || "Unknown Task"}
+          </span>
         </div>
 
         <div className="req-meta">
@@ -60,13 +68,13 @@ function RequestCard({ request, onAccept, onDecline }) {
 
       {/* --- Right: Buttons --- */}
       <div className="req-actions-section">
-        <button 
-          className="req-btn accept-btn" 
+        <button
+          className="req-btn accept-btn"
           onClick={() => onAccept(request._id)}
         >
           Accept
         </button>
-        <button 
+        <button
           className="req-btn decline-btn"
           onClick={() => onDecline(request._id)}
         >

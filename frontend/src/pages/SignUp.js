@@ -29,7 +29,6 @@ function SignUp() {
         payload
       );
 
-      console.log("Signup success:", data);
       navigate("/verify-email");
     } catch (err) {
       console.error("Signup error:", err.response?.data || err.message);
@@ -129,24 +128,23 @@ function SignUp() {
 
           <div className="input-group">
             <label htmlFor="password">Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter new password (min 6 characters)"
-                required
-              />
-              <button
-                type="button"
-                className="eye-icon"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex="-1"
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
+
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter new password (min 6 characters)"
+              required
+            />
+            <button
+              type="button"
+              className="eye-icon"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex="-1"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           <button type="submit" className="signup-button">

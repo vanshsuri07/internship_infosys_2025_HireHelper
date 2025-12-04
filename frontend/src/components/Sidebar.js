@@ -19,9 +19,6 @@ function Sidebar() {
   // 2. GET USER AND LOGOUT FROM CONTEXT
   const { user, logout } = useAuth();
 
-  // This will help us debug if the user data is still missing
-  console.log("User from context:", user);
-
   return (
     <div className="sidebar">
       <div className="sidebar-top">
@@ -100,7 +97,7 @@ function Sidebar() {
                 className="profile-photo"
               />
             ) : (
-              <div className="profile-initials">
+              <div className="profile-init">
                 {user.firstName?.[0]?.toUpperCase() || ""}
                 {user.lastName?.[0]?.toUpperCase() || ""}
               </div>

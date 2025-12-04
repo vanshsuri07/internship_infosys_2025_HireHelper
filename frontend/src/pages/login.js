@@ -5,7 +5,7 @@ import { API_PATHS } from "../api/apipath";
 import "./login.css";
 import welcomeBackground from "../assets/HireHelper_bg.jpeg";
 import logoImage from "../assets/logo.png";
-import { useAuth } from "../context/AuthContext"; // Import useAuth
+import { useAuth } from "../context/AuthContext";
 import { IoArrowBack } from "react-icons/io5";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 function Login() {
