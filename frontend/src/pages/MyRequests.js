@@ -27,8 +27,9 @@ function MyRequests() {
   const fetchSentRequests = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get(API_PATHS.REQUESTS.GET_SENT_REQUESTS);
-
+      const res = await axios.get(`${API_PATHS.REQUESTS.GET_SENT_REQUESTS}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       let requestsData = [];
       if (Array.isArray(res.data)) {
         requestsData = res.data;

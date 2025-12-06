@@ -16,7 +16,7 @@ router.post("/", protect, upload.single("picture"), createTask);
 router.get("/", protect, getAllTasks);
 router.get("/my", protect, getMyTasks);
 router.get("/:id", protect, getTaskById);
-router.patch("/:id", protect, updateTask);
+router.patch("/:id", protect, upload.single("picture"), updateTask);
 router.delete("/:id", protect, deleteTask);
 
 module.exports = router;

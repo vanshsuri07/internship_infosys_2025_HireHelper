@@ -4,12 +4,12 @@ import "./Settings.css";
 import { useAuth } from "../context/AuthContext";
 import { API_PATHS } from "../api/apipath";
 import axios from "axios";
-import axiosInstance from "../api/axiosInstance";
 
 // API Configuration
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 function Settings() {
+  // Auth state - replace with your actual auth context
   const { user, setUser } = useAuth();
 
   // Form state
@@ -73,6 +73,13 @@ function Settings() {
     return localStorage.getItem("token");
   };
 
+  // Fix for AuthContext destructuring - at the top of the component
+  // Replace these two lines:
+  // const { user } = useAuth();
+  // const { setUser } = useAuth();
+  // With this single line:
+  // const { user, setUser } = useAuth();
+
   // Handle profile update
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,13 +99,15 @@ function Settings() {
       formData.append("bio", bio);
 
       if (profileImage) {
-        formData.append("profileImage", profileImage);
+        formData.append("profileImage", profileImage); // MUST MATCH multer.single("profileImage")
       }
 
-      const res = await axiosInstance.patch(
-        API_PATHS.AUTH.UPDATE_PROFILE,
-        formData
-      );
+      const res = await axios.patch(API_PATHS.AUTH.UPDATE_PROFILE, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setUser(res.data.data);
       setSuccess("Profile updated successfully!");
@@ -129,10 +138,12 @@ function Settings() {
       const formData = new FormData();
       formData.append("removeProfileImage", "true");
 
-      const res = await axiosInstance.patch(
-        API_PATHS.AUTH.UPDATE_PROFILE,
-        formData
-      );
+      const res = await axios.patch(API_PATHS.AUTH.UPDATE_PROFILE, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setUser(res.data.data);
       setProfileImage(null);
@@ -153,8 +164,14 @@ function Settings() {
     setSuccess("");
 
     try {
-      const response = await axiosInstance.post("/api/users/forgot-password", {
-        email: user.email,
+      const response = await fetch(`${BASE_URL}/api/users/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user.email,
+        }),
       });
 
       const data = await response.json();

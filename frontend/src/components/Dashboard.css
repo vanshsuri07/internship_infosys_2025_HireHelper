@@ -109,11 +109,7 @@
   justify-content: center;
 }
 
-.profile-details {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+
 
 .profile-name {
   font-weight: bold;
@@ -130,6 +126,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 120px;     /* ⭐ prevents long names from pushing logout button */
+}
+
+
+
 
 .logout-button {
   background: none;
@@ -139,7 +144,12 @@
   cursor: pointer;
   padding: 5px;
   transition: 0.2s ease;
+  margin-left: auto;            /* 👍 pushes logout to the right */
+  display: flex;                /* 👍 fixes vertical alignment */
+  align-items: center;          /* 👍 centers the icon perfectly */
+  justify-content: center;
 }
+
 
 .logout-button:hover {
   color: #ffe4f4;

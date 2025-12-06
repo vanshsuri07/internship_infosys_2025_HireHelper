@@ -39,20 +39,23 @@ function DashboardLayout() {
   const currentSubtitle =
     pageTitles[location.pathname]?.subtitle || "Welcome to Hire-a-Helper";
 
+  // Hide search bar on specific pages
+  const hideSearchOn = ["/dashboard/settings", "/dashboard/addtask"];
+  const showSearch = !hideSearchOn.includes(location.pathname);
+
   return (
     <div className="dashboard-container">
       <Sidebar />
 
       <main className="dashboard-main">
-        {/* pass search handler */}
         <Header
           title={currentTitle}
           subtitle={currentSubtitle}
           onSearch={setSearch}
+          showSearch={showSearch}
         />
 
         <div className="dashboard-content">
-          {/* pass search value to child pages */}
           <Outlet context={{ search }} />
         </div>
       </main>

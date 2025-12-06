@@ -4,7 +4,6 @@ import { useNavigate, useOutletContext } from "react-router-dom"; // 1. Import u
 import { API_PATHS } from "../api/apipath";
 import TaskCard from "../components/TaskCard";
 import "./MyTasks.css";
-import axiosInstance from "../api/axiosInstance";
 
 function MyTasks() {
   const [tasks, setTasks] = useState([]);
@@ -21,6 +20,7 @@ function MyTasks() {
   const search = context ? context.search : "";
 
   // 3. Filter Logic
+  // Note: This filters the *current page* of tasks
   const filteredTasks = tasks.filter((task) => {
     const term = search.toLowerCase();
     const title = task.title ? task.title.toLowerCase() : "";
@@ -48,9 +48,12 @@ function MyTasks() {
         params.append("status", status);
       }
 
-      const res = await axiosInstance.get(API_PATHS.TASK.GET_MY_TASKS, {
-        params,
-      });
+      const res = await axios.get(
+        `${API_PATHS.TASK.GET_MY_TASKS}?${params.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (res.data.success) {
         setTasks(res.data.data || []);

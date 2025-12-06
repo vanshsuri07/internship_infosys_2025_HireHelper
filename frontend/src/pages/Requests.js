@@ -113,12 +113,6 @@ function Requests() {
                   <h3 className="req-name">
                     {req.requester?.firstName} {req.requester?.lastName}
                   </h3>
-
-                  <div className="req-rating-badge">
-                    <FaStar className="star-icon" />
-                    <span className="rating-num">4.8</span>
-                    <span className="review-count">(12 reviews)</span>
-                  </div>
                 </div>
 
                 <p className="req-message">
@@ -135,10 +129,6 @@ function Requests() {
                 <div className="req-meta-row">
                   <div className="req-meta-item">
                     <FaClock /> <span>{formatTime(req.createdAt)}</span>
-                  </div>
-
-                  <div className="req-meta-item">
-                    <FaMapMarkerAlt /> <span>Within 5 miles</span>
                   </div>
                 </div>
               </div>

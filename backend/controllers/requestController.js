@@ -18,6 +18,7 @@ exports.sendRequest = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Task not found" });
+
     if (task.user.toString() === req.user._id.toString())
       return res
         .status(400)
@@ -38,6 +39,12 @@ exports.sendRequest = async (req, res) => {
       message,
     });
 
+    // 🔥 THIS WAS MISSING → Create notification
+    await Notification.create({
+      user: task.user,
+      body: `New request for your task "${task.title}"`,
+    });
+
     res.status(201).json({ success: true, request });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -50,14 +57,15 @@ exports.getReceivedRequests = async (req, res) => {
     const requests = await Request.find()
       .populate({
         path: "task",
-        match: { user: req.user._id }, // filter right here
+        match: { user: req.user._id },
         select: "title description picture location start_time end_time user",
         populate: {
           path: "user",
           select: "firstName lastName email profileImageUrl",
         },
       })
-      .populate("requester", "firstName lastName email profileImageUrl");
+      .populate("requester", "firstName lastName email profileImageUrl")
+      .sort({ createdAt: -1 }); // 🔥 sort newest → oldest
 
     const filtered = requests.filter((r) => r.task !== null);
 
