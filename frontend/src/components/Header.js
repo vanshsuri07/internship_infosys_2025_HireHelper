@@ -75,17 +75,7 @@ function Header({ title, subtitle, onSearch, showSearch = true }) {
 
       <div className="header-controls">
         {/* 🔍 SEARCH BAR */}
-        {showSearch && (
-          <div className="header-search">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-          </div>
-        )}
+
         {showSearch && (
           <div className="header-search">
             <FaSearch className="search-icon" />
