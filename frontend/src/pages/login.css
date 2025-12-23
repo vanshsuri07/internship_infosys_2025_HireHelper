@@ -1,0 +1,445 @@
+/* --- Main Container --- */
+* {
+  box-sizing: border-box;
+}
+
+.login-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* --- Form Side (LEFT) --- */
+.form-side {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #ffffff;
+  align-items: center; /* Centers the form block */
+  position: relative;
+}
+
+.back-link {
+  text-decoration: none;
+  color: #555;
+  position: absolute;
+  top: 40px;  /* Matches the panel's padding */
+  left: 40px; /* Matches the panel's padding */
+}
+
+.form-side h2 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  color: #000;
+  font-weight: bold;
+  align-self: center; /* Centers the title */
+}
+
+.form-side form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+.form-row .input-group { flex: 1; }
+
+.input-group {
+  margin-bottom: 25px;
+  width: 100%;
+  position: relative; /* Add this */
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 45px 15px 15px; /* add right padding for the eye */
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: 2px solid #e11d74;
+  outline-offset: 2px;
+}
+
+.eye-icon {
+  position: absolute; /* position inside input */
+  top: 65%;
+  right: 12px; /* distance from right */
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.eye-icon:hover {
+  color: #000;
+}
+
+
+/* --- NEW: Forgot Password Style --- */
+.forgot-password {
+  color: #e11d74; /* Pink color */
+  font-weight: bold;
+  text-align: right;
+  cursor: pointer;
+  margin-top: -15px;
+  margin-bottom: 25px;
+}
+
+/* --- Login Button Style --- */
+.login-button {
+  width: 35%;
+  min-width: 200px;
+  align-self: center;
+  padding: 15px;
+  border: none;
+  border-radius: 25px; 
+  background-color: #e11d74; 
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: #c01560;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(225, 29, 116, 0.3);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.password-input-wrapper input:focus {
+  outline: none;
+  border-color: #000a01;
+}
+/* --- Welcome Side (RIGHT) --- */
+.welcome-side {
+  flex: 1; 
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+}
+
+.welcome-overlay {
+  /* background-color: rgba(0, 0, 0, 0.2);  */
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  color: #ffffff; 
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  /* Default alignment for children is CENTER */
+  align-items: center;
+}
+
+/* --- Aligns logo to the RIGHT --- */
+.welcome-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;         
+  align-items: center;   
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+.welcome-logo img {
+  height: 1.5rem; 
+  width: auto;    
+  margin-left: 10px; 
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+.welcome-content {
+  text-align: center;
+}
+
+.welcome-content h2 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.signup-prompt {
+  text-align: center;
+}
+
+.signup-prompt p {
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+/* --- Sign Up Button Style (on right side) --- */
+/* Add this new rule anywhere in Login.css */
+.signup-hyperlink {
+  color: #ffffff; /* Make the link white */
+  font-weight: bold;
+  text-decoration: underline; /* Makes it look like a link */
+  cursor: pointer;
+}
+
+/* Optional: Nice hover effect */
+.signup-hyperlink:hover {
+  text-decoration: none;
+}
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.back-icon {
+  font-size: 1.2rem;
+}
+
+/* --- Style for Login Error Message --- */
+.form-error {
+  color: red;
+  background-color: #ffe0e0;
+  border: 1px solid red;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+  max-width: 500px;
+  width: 100%;
+}
+/* ============================================================
+   TABLET RESPONSIVENESS
+============================================================ */
+@media (max-width: 1024px) {
+  .welcome-content h2 {
+    font-size: 2.5rem;
+  }
+
+  .form-side h2 {
+    font-size: 2rem;
+  }
+
+  .welcome-overlay {
+    padding: 30px;
+  }
+
+  .form-side {
+    padding: 30px;
+  }
+
+  .back-link {
+    top: 30px;
+    left: 30px;
+  }
+}
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+============================================================ */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Hide welcome side on mobile, show form only */
+  .welcome-side {
+    display: none;
+  }
+
+  .form-side {
+    flex: 1;
+    padding: 20px;
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .back-link {
+    position: static;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    align-self: flex-start;
+  }
+
+  .form-side h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .form-side form {
+    max-width: 100%;
+  }
+
+  /* Stack form inputs vertically on mobile */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-group label {
+    font-size: 0.95rem;
+  }
+
+  .input-group input {
+    padding: 13px 45px 13px 13px;
+    font-size: 0.95rem;
+  }
+
+  .eye-icon {
+    right: 10px;
+    font-size: 1rem;
+  }
+
+  .forgot-password {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .login-button {
+    width: 100%;
+    min-width: unset;
+    padding: 14px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .form-error {
+    padding: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+  }
+}
+
+/* ============================================================
+   SMALL MOBILE DEVICES
+============================================================ */
+@media (max-width: 480px) {
+  .form-side {
+    padding: 15px;
+    padding-top: 30px;
+  }
+
+  .back-link {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  .back-icon {
+    font-size: 1rem;
+  }
+
+  .form-side h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 18px;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .input-group input {
+    padding: 12px 40px 12px 12px;
+    font-size: 0.9rem;
+  }
+
+  .eye-icon {
+    font-size: 0.95rem;
+  }
+
+  .forgot-password {
+    font-size: 0.85rem;
+    margin-top: -8px;
+    margin-bottom: 18px;
+  }
+
+  .login-button {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+
+  .form-error {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================================
+   LANDSCAPE MOBILE (OPTIONAL)
+============================================================ */
+@media (max-width: 768px) and (orientation: landscape) {
+  .login-container {
+    height: auto;
+  }
+
+  .form-side {
+    min-height: auto;
+    padding: 20px;
+    padding-top: 25px;
+  }
+
+  .form-side h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
+
+  .forgot-password {
+    margin-bottom: 15px;
+  }
+
+  .login-button {
+    margin-top: 5px;
+  }
+}

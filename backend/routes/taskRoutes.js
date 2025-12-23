@@ -1,6 +1,6 @@
 const express = require("express");
 const { protect } = require("../middlewares/authMiddleware");
-
+const upload = require("../config/multer");
 const {
   createTask,
   getAllTasks,
@@ -12,11 +12,11 @@ const {
 
 const router = express.Router();
 
-router.post("/", protect, createTask);
+router.post("/", protect, upload.single("picture"), createTask);
 router.get("/", protect, getAllTasks);
 router.get("/my", protect, getMyTasks);
 router.get("/:id", protect, getTaskById);
-router.patch("/:id", protect, updateTask);
+router.patch("/:id", protect, upload.single("picture"), updateTask);
 router.delete("/:id", protect, deleteTask);
 
 module.exports = router;

@@ -19,17 +19,26 @@ const UserSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      unique: true,
+    },
+    profileImageUrl: {
+      type: String,
+      default: null,
     },
     password: {
       type: String,
       required: true,
     },
+    bio: {
+      type: String,
+    },
     isVerified: {
       type: Boolean,
       default: false,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
+
   {
     timestamps: true,
   }

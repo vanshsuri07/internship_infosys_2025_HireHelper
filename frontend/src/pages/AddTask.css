@@ -1,0 +1,82 @@
+.add-task-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.add-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box; /* Important for padding */
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* For file input */
+.form-group input[type="file"] {
+  padding: 10px;
+}
+
+/* For date/time rows */
+.form-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.submit-task-button {
+  padding: 15px;
+  border: none;
+  border-radius: 25px; 
+  background-color: #e91695; 
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 35%;
+  align-self: center;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+  .add-task-container {
+    padding: 20px; /* Less padding */
+  }
+
+  .form-row {
+    flex-direction: column; /* Stack inputs vertically */
+    gap: 0;
+  }
+
+  .submit-task-button {
+    width: 100%; /* Full width button on mobile */
+  }
+}

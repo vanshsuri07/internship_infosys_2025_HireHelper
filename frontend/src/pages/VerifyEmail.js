@@ -18,14 +18,11 @@ function VerifyEmail() {
     setError("");
 
     try {
-      // ✅ send `otp`, not `code`
       const { data } = await axiosInstance.post(API_PATHS.AUTH.VERIFY_EMAIL, {
         otp: code,
       });
 
       console.log("Verification success:", data);
-
-      // ✅ On success, navigate to login
       navigate("/login");
     } catch (err) {
       console.error("Verification failed:", err.response?.data || err.message);
@@ -37,7 +34,6 @@ function VerifyEmail() {
 
   const handleResend = async () => {
     try {
-      // 🔹 Use a proper resend endpoint, not verify
       await axiosInstance.post(API_PATHS.AUTH.FORGOT_PASSWORD);
       alert("Verification code resent!");
     } catch (err) {

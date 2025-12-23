@@ -4,6 +4,8 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const requestRoutes = require("./routes/requestRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const app = express();
 
 app.use(
@@ -13,6 +15,8 @@ app.use(
   })
 );
 
+
+
 connectDB();
 
 const PORT = process.env.PORT || 5000;
@@ -20,6 +24,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/requests", requestRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

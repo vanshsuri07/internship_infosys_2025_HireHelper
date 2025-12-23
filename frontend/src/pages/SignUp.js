@@ -5,7 +5,8 @@ import { API_PATHS } from "../api/apipath";
 import "./SignUp.css";
 import welcomeBackground from "../assets/HireHelper_bg.jpeg";
 import logoImage from "../assets/logo.png";
-
+import { IoArrowBack } from "react-icons/io5";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -13,13 +14,13 @@ function SignUp() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const payload = { firstName, lastName, email, phone, password };
+    const payload = { firstName, lastName, email, password };
 
     try {
       // --- API CALL ---
@@ -28,12 +29,6 @@ function SignUp() {
         payload
       );
 
-      console.log("Signup success:", data);
-
-      // You can store token or user if needed:
-      // localStorage.setItem("token", data.token);
-
-      // Navigate to verify email or dashboard
       navigate("/verify-email");
     } catch (err) {
       console.error("Signup error:", err.response?.data || err.message);
@@ -76,8 +71,9 @@ function SignUp() {
 
       {/* RIGHT SIDE */}
       <div className="form-side">
-        <a href="#" className="back-link">
-          ← Back to website
+        <a href="/" className="back-link">
+          <IoArrowBack className="back-icon" />
+          Back to website
         </a>
 
         <form onSubmit={handleSubmit}>
@@ -110,13 +106,12 @@ function SignUp() {
           </div>
 
           <div className="input-group">
-            <label>Phone Number</label>
+            <label>Phone Number (Optional)</label>
             <input
               type="tel"
               placeholder="Enter your phone number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              required
             />
           </div>
 
@@ -132,14 +127,24 @@ function SignUp() {
           </div>
 
           <div className="input-group">
-            <label>Password</label>
+            <label htmlFor="password">Password</label>
+
             <input
-              type="password"
-              placeholder="••••••••••"
+              type={showPassword ? "text" : "password"}
+              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter new password (min 6 characters)"
               required
             />
+            <button
+              type="button"
+              className="eye-icon"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex="-1"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           <button type="submit" className="signup-button">
