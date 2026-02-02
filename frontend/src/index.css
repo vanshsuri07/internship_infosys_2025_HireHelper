@@ -1,0 +1,32 @@
+/* 1. Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. Body Styles & Background Fix */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* --- THE IMPORTANT FIXES --- */
+  background-color: #ffffff !important; /* Forces white background */
+  height: 100vh;
+}
+
+/* 3. Root Container Fix */
+#root {
+  background-color: #ffffff !important; /* Forces white background */
+  min-height: 100vh;
+}
+
+/* 4. Code Font (Optional) */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

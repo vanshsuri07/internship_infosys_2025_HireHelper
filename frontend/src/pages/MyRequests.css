@@ -1,0 +1,273 @@
+.my-requests-container {
+  width: 100%;          
+  max-width: 100%;    
+  margin: 0;            
+  padding: 30px 40px;   
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+.sent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.sent-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.sent-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.user-info {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  background-color: #f0f0f0;
+  color: #333;
+  flex-shrink: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.task-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.category-tag {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 14px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.task-owner {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  margin-top: 2px;
+}
+
+.status-badge {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-badge.pending {
+  background-color: #fff8e1;
+  color: #f57c00;
+  border: 1px solid #ffe0b2;
+}
+
+.status-badge.accepted {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.status-badge.rejected {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.message-box {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #e91695;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.message-box strong {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.message-box p {
+  margin: 0;
+  white-space: pre-line;
+  color: #4a5568;
+}
+
+
+.meta-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-item svg {
+  color: #e91695;
+  font-size: 14px;
+}
+
+.task-image-container {
+  margin-top: 24px;
+}
+
+.task-image {
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.loading, .error-message, .no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #d32f2f;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .my-requests-container {
+    padding: 20px 20px;
+  }
+
+  .sent-list {
+    gap: 20px;
+  }
+
+  .sent-card {
+    padding: 20px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .user-info {
+    gap: 12px;
+  }
+
+  .avatar-circle {
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .task-title {
+    font-size: 17px;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .message-box {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .meta-details {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .task-image {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-requests-container {
+    padding: 15px;
+  }
+
+  .sent-card {
+    padding: 16px;
+  }
+
+  .task-title {
+    font-size: 16px;
+  }
+
+  .category-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .message-box {
+    padding: 14px;
+  }
+}

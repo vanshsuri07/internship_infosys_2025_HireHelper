@@ -1,0 +1,106 @@
+:root {
+  --bg-page: #ffffff;
+}
+
+/* Main Container */
+.feed-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+}
+
+/* Grid Layout - Matches TaskCard logic */
+.feed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+/* --- SKELETON LOADING ANIMATION --- */
+.skeleton-wrapper {
+  display: contents; /* Allows grid to control children */
+}
+
+.skeleton-card {
+  background: #ffffff;
+  border-radius: 12px;
+  height: 380px; /* Approx height of real card */
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  position: relative;
+}
+
+.skeleton-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-image {
+  height: 140px;
+  background-color: #e2e8f0;
+}
+
+.skeleton-content {
+  padding: 1rem;
+}
+
+.skeleton-line {
+  height: 1rem;
+  background-color: #e2e8f0;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+}
+
+.skeleton-line.short { width: 60%; }
+.skeleton-line.long { width: 90%; }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* --- EMPTY STATE --- */
+.no-tasks-container {
+  text-align: center;
+  padding: 4rem 1rem;
+  background: white;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.no-tasks-icon {
+  font-size: 3.5rem;
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.no-tasks-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.no-tasks-text {
+  color: var(--text-muted);
+}

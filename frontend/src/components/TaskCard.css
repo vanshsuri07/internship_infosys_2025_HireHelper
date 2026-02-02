@@ -1,0 +1,250 @@
+:root {
+  --primary-color: #e91594;
+  --primary-soft: #e0e7ff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --bg-card: #ffffff;
+  --radius-card: 12px; /* Slightly smaller radius */
+}
+
+/* Grid - Allows smaller columns */
+.my-tasks-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Reduced min-width */
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+}
+
+/* Compact Card */
+.my-task-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-task-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+  border-color: #c7d2fe;
+}
+
+/* Image - Compact Height */
+.task-card-image-container {
+  width: 100%;
+  height: 140px; /* Reduced from 200px */
+  position: relative;
+  overflow: hidden;
+}
+
+.task-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.my-task-card:hover .task-card-image {
+  transform: scale(1.05);
+}
+
+/* Badges - Smaller */
+.task-card-status-badge,
+.task-card-category-badge {
+  position: absolute;
+  top: 10px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 100px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.task-card-status-badge {
+  right: 10px;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Moved Category Badge to top-left over image to save space */
+.task-card-category-badge {
+  left: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary-color);
+  backdrop-filter: blur(4px);
+}
+
+/* Content - Tighter Padding */
+.task-card-content {
+  padding: 1rem; /* Reduced from 1.5rem */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.task-card-title {
+  font-size: 1rem; /* Reduced font size */
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+.task-card-user {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.task-card-description {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Info Box - Compact Grid */
+.task-card-info {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 0.75rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* Tighter spacing */
+}
+
+.task-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem; /* Smaller text */
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.task-icon {
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  width: 14px; 
+  text-align: center;
+}
+
+/* Actions area */
+.task-status-control {
+  margin-top: auto;
+  margin-bottom: 0.75rem;
+}
+
+.status-dropdown {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  cursor: pointer;
+}
+
+.task-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.task-card-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.edit-button, .request-button {
+  background-color: var(--primary-soft);
+  color: var(--primary-color);
+}
+.edit-button:hover, .request-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+.delete-button {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #fee2e2 !important;
+}
+.delete-button:hover {
+  background: #fee2e2;
+}
+
+
+/* 3. The Status Badge (Top Right Corner) */
+.task-card-status-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 2; /* Ensures it sits on top of the image */
+}
+/* Normal request button */
+
+
+.btn-request {
+  background: linear-gradient(135deg, #ff4bad, #e91594);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  transition: 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-request:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 4px 12px rgba(233, 21, 148, 0.4);
+}
+
+/* Already sent */
+.request-sent-button {
+  background: #611a7b;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: default !important;
+}
+
+.btn-disabled {
+  background: #bbb !important;
+  color: #f6f6f6 !important;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
