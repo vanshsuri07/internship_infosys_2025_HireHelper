@@ -99,7 +99,7 @@ Ensure you have the following installed:
    From the `backend` directory:
    ```bash
    npm start
-   # Or for development with nodemon:
+   # Or for development:
    npm run dev
    ```
    The server will start on port 5000 (or your defined PORT).
